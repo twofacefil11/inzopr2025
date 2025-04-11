@@ -16,7 +16,9 @@ static bool quit = false;
 typedef enum {
   NO_FILTER, /*!< Nic nie robi */
   BW,        /*!< Black and White */
-  REVERSED   /*!< Odwraca kolory */
+  NEGATIVE,  /*!< Odwraca kolory */
+  AMPLIFY,
+  BLUR
 } Filter;
 
 // frame prosto dla windowsa
@@ -49,7 +51,9 @@ void apply_filter(
 
 // specificfilter functions
 void apply_black_and_white(Image *image_data);
-void apply_reversed(Image *image_data);
+void apply_negative(Image *image_data);
+void apply_blur(Image *image_data, unsigned char *ref_pixels);
+void apply_amplify(Image *image_data, double coef); // todo
 
 // formatowanie dla windowsa do rysowania
 void blit_to_frame(Image *src, struct Frame *frame);
@@ -60,7 +64,7 @@ static HBITMAP frame_bitmap = 0;
 static HDC frame_device_context = 0;
 
 // TEST
-static Filter test_filter_type = NO_FILTER;
+static Filter test_filter_type = BLUR;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
                    int nCmdShow) {
@@ -116,16 +120,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
               MAKELPARAM(image_data.width, image_data.height));
   app.image_data = &image_data;
 
-  SetWindowPos(window_handle, NULL, 0, 0, rect.right - rect.left, rect.bottom - rect.top,
-               SWP_NOZORDER | SWP_NOMOVE);
+  SetWindowPos(window_handle, NULL, 0, 0, rect.right - rect.left,
+               rect.bottom - rect.top, SWP_NOZORDER | SWP_NOMOVE);
   // jest szansa że tego loopa nie będzie, jak będą już eventy od UI ale im
 
-  MoveWindow(window_handle, 0, 0,
-           rect.right - rect.left,
-           rect.bottom - rect.top,
-           TRUE);
+  MoveWindow(window_handle, 0, 0, rect.right - rect.left,
+             rect.bottom - rect.top, TRUE);
   // TEST: Tę funckje powinny wywoływać elementy UI. puki co test, no filter.
   apply_filter(&image_data, test_filter_type); // TEST puki co tylko raz
+  // po tym będzie też basic correction coś. ale to ogarniemy;
 
   while (!quit) {
 
@@ -198,8 +201,16 @@ void apply_filter(Image *image_data, Filter filter_type) {
     apply_black_and_white(image_data); // TODO
     break;
 
-  case REVERSED:
-    apply_reversed(image_data); // TODO
+  case NEGATIVE:
+    apply_negative(image_data); // TODO
+    break;
+
+  case AMPLIFY:
+    apply_amplify(image_data, 1.50); // TODO
+    break;
+
+  case BLUR:
+    apply_blur(image_data, image_data->pixels);
     break;
 
   default:
@@ -306,6 +317,88 @@ void apply_black_and_white(Image *image_data) {
   // TODO
 }
 
-void apply_reversed(Image *image_data) {
+void apply_negative(Image *image_data) {
+
+  for (int y = 0; y < image_data->height; y++) {
+    for (int x = 0; x < image_data->width; x++) {
+      int i = (y * image_data->width + x) * 4; // forcujemy 4 channele
+
+      // rozszczepiamy
+      uint8_t r, g, b;
+      r = image_data->pixels[i + 0];
+      g = image_data->pixels[i + 1];
+      b = image_data->pixels[i + 2];
+
+      image_data->pixels[i + 0] = 255 - r;
+      image_data->pixels[i + 1] = 255 - g;
+      image_data->pixels[i + 2] = 255 - b;
+      image_data->pixels[i + 3] = 255; // alpha i think
+    }
+  }
+}
+
+void apply_blur(Image *image_data, unsigned char *ref_pixels) {
+  // TODO:
+  // blur powinien tez mieć zakres. gaussian chyba najłatwiejszy, itak nikogo
+  // nie obhodzi
+  // for (int y = 0; y < image_data->height; y++) {
+  //   for (int x = 0; x < image_data->width; x++) {
+  //     int i = (y * image_data->width + x) * 4;
+
+  //     // matrix na obliczanie bluru typu gausian
+  //     float kernel[3][3] = {{1 / 16.0f, 2 / 16.0f, 1 / 16.0f},
+  //                           {2 / 16.0f, 4 / 16.0f, 2 / 16.0f},
+  //                           {1 / 16.0f, 2 / 16.0f, 1 / 16.0f}};
+
+  //     uint8_t r, g, b;
+  //     for (int t = 0; t < 10; t++) {
+
+  //       for (int ky = -1; ky <= 1; ++ky) {
+  //         for (int kx = -1; kx <= 1; ++kx) {
+
+  //           int sampleX = x + kx;
+  //           int sampleY = y + ky;
+  //           int sampleIndex = (sampleY * image_data->width + sampleX) * 4;
+
+  //           float weight = kernel[ky + 1][kx + 1];
+  //           r = ref_pixels[sampleIndex + 0] * weight;
+  //           g = ref_pixels[sampleIndex + 1] * weight;
+  //           b = ref_pixels[sampleIndex + 2] * weight;
+  //         }
+  //       }
+  //     }
+
+  //     // rozszczepiamy
+  //     r = image_data->pixels[i + 0];
+  //     g = image_data->pixels[i + 1];
+  //     b = image_data->pixels[i + 2];
+
+  //     // image_data->pixels[i + 0] = r * coef;
+  //     // image_data->pixels[i + 1] = g * coef;
+  //     // image_data->pixels[i + 2] = b * coef;
+  //     // image_data->pixels[i + 3] = 255;// alpha i think
+  //   }
+  // }
+}
+
+void apply_amplify(Image *image_data, double coef) {
+
+  for (int y = 0; y < image_data->height; y++) {
+    for (int x = 0; x < image_data->width; x++) {
+      int i = (y * image_data->width + x) * 4; // forcujemy 4 channele
+
+      // rozszczepiamy
+      uint8_t r, g, b;
+      r = image_data->pixels[i + 0];
+      g = image_data->pixels[i + 1];
+      b = image_data->pixels[i + 2];
+
+      image_data->pixels[i + 0] = r * coef;
+      image_data->pixels[i + 1] = g * coef;
+      image_data->pixels[i + 2] = b * coef;
+      image_data->pixels[i + 3] = 255; // alpha i think
+    }
+  }
+
   // TODO
 }
