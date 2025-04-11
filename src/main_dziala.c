@@ -98,6 +98,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
   if (window_handle == NULL)
     return -1;
 
+
+
   // Struct reprezentujący załadowany obraz, gd
 
   Image image_data;
@@ -105,25 +107,21 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
   // Tutaj ładujemy do buffera info o obrazku trzeba to ędzie wyabstrachowac
   //
   // jakoś potem, jak będą UI calls
-  image_data.pixels = stbi_load("../test_assets/test.bmp", &image_data.width,
+  image_data.pixels = stbi_load("../test_assets/test.jpg", &image_data.width,
                                 &image_data.height, &image_data.channels, 4);
-
+  
   // sztuczny resize na początku działania programu just in case, podobno dobre.
   RECT rect = {0, 0, image_data.width, image_data.height};
+  int client_width = rect.right - rect.left;
+  int client_height = rect.bottom - rect.top;
 
   UpdateWindow(window_handle);
   SendMessage(window_handle, WM_SIZE, 0,
               MAKELPARAM(image_data.width, image_data.height));
   app.image_data = &image_data;
 
-  SetWindowPos(window_handle, NULL, 0, 0, rect.right - rect.left, rect.bottom - rect.top,
-               SWP_NOZORDER | SWP_NOMOVE);
   // jest szansa że tego loopa nie będzie, jak będą już eventy od UI ale im
 
-  MoveWindow(window_handle, 0, 0,
-           rect.right - rect.left,
-           rect.bottom - rect.top,
-           TRUE);
   // TEST: Tę funckje powinny wywoływać elementy UI. puki co test, no filter.
   apply_filter(&image_data, test_filter_type); // TEST puki co tylko raz
 
@@ -251,9 +249,21 @@ LRESULT CALLBACK WindowProcessMessage(HWND window_handle, UINT message,
 
   // resize msg
   case WM_SIZE: {
-    // TODO: centerowanie and all
     frame.width = LOWORD(lParam);
     frame.height = HIWORD(lParam);
+
+    // trzeba reobliczyć i zrealokować frame array
+    // int new_pixel_count = LOWORD(lParam) * HIWORD(lParam);
+
+    // if (frame.pixels)
+    //     free(frame.pixels);  // koniecznie
+
+    // frame.pixels =
+    //     malloc(new_pixel_count * sizeof(uint8_t));  // Allocate new memory
+
+    // if (frame_bitmap) {
+    //     DeleteObject(frame_bitmap);
+    // }
 
     frame_bitmap_info.bmiHeader.biWidth = LOWORD(lParam);
     frame_bitmap_info.bmiHeader.biHeight = HIWORD(lParam);
@@ -292,12 +302,12 @@ void apply_black_and_white(Image *image_data) {
       g = image_data->pixels[i + 1];
       b = image_data->pixels[i + 2];
 
-      int bw_value = (r + g + b) / 3;
+      int bw_value =  (r + g + b) / 3;
 
       image_data->pixels[i + 0] = bw_value;
       image_data->pixels[i + 1] = bw_value;
       image_data->pixels[i + 2] = bw_value;
-      image_data->pixels[i + 3] = 255; // alpha i think
+      image_data->pixels[i + 3] = 255; //alpha i think
 
       // zapaku do komórki
       // image_data->pixels[i] = (a << 24) | (r << 16) | (g << 8) | b;
