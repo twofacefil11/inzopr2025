@@ -60,7 +60,7 @@ static HBITMAP frame_bitmap = 0;
 static HDC frame_device_context = 0;
 
 // TEST
-static Filter test_filter_type = BW;
+static Filter test_filter_type = NO_FILTER;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
                    int nCmdShow) {
@@ -105,7 +105,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
   // Tutaj ładujemy do buffera info o obrazku trzeba to ędzie wyabstrachowac
   //
   // jakoś potem, jak będą UI calls
-  image_data.pixels = stbi_load("../test_assets/test.bmp", &image_data.width,
+  image_data.pixels = stbi_load("../test_assets/test.png", &image_data.width,
                                 &image_data.height, &image_data.channels, 4);
 
   // sztuczny resize na początku działania programu just in case, podobno dobre.
