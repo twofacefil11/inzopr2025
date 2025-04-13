@@ -39,9 +39,9 @@ Powyższe skrypty przywołują owe środowisko i wywołują instrukcje kompilacj
 
 Skrypty powinny być w stanie oszacować, czy VS22 jest zainstalowane w **domyślnej lokalizacji** oraz w jakiej edycji (od niej zależy ścieżka do `Developer Command Prompt for VS 2022`).
 
-W przyszłości skrypty z **pewnością** zmienią się, gdy dojdziemy zdefiniujemy tryby kompilacji dla **DEBUG**, **TESTING**, oraz obsługe **LOGGING**.
+W przyszłości skrypty z **pewnością** zmienią się, gdy zdefiniujemy tryby kompilacji dla **DEBUG**, **TESTING**, oraz obsługe **LOGGING**.
 
-Jeżeli ktoś umie i chce, to niech ogarnie `.slc` dla VS22. Ja tego nie potrzebuje do szczęścia.
+Jeżeli ktoś umie i chce, to niech ogarnie `.sln` dla VS22. Ja tego nie potrzebuje do szczęścia.
 
 ## Platform
 
