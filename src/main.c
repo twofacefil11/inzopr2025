@@ -432,20 +432,20 @@ void export_image(char const *filename, int width, int height,
     break;
   case JPG:
     extention = ".jpg";
-    stbi_write_png(strcat((char*)filename, extention), width, height, 4, pixels,
+    stbi_write_jpg(strcat((char*)filename, extention), width, height, 4, pixels,
                    quality);
     break;
   case BMP:
     extention = ".bmp";
-    stbi_write_png(strcat((char*)filename, extention), width, height, 4, pixels);
+    stbi_write_bmp(strcat((char*)filename, extention), width, height, 4, pixels);
     break;
   case TGA:
     extention = ".tga";
-    stbi_write_png(strcat((char*)filename, extention), width, height, 4, pixels);
+    stbi_write_tga(strcat((char*)filename, extention), width, height, 4, pixels);
     break;
   case HDR:
     extention = ".hdr";
-    stbi_write_png(strcat((char*)filename, extention), width, height, 4, pixels);
+    stbi_write_hdr(strcat((char*)filename, extention), width, height, 4, (float*)pixels);
     break;
   }
 }
