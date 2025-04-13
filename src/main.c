@@ -1,16 +1,21 @@
-
+// TODO: czytanie headerów z stb_image może mieć problem z unicodem, trzeba się
+// tym zająć. przeczytać usage i remarks z headerów.
 #define STB_IMAGE_IMPLEMENTATION
 #define UNICODE
 #define _UNICODE
 
 #include "../include/stb_image.h"
+#include "../include/stb_image_write.h"
 #include <stdint.h>
+#include <string.h>
 #include <windows.h>
 
 // #include <stdbool.h>  //winkwink
 typedef enum { false, true } bool;
 
 static bool quit = false;
+
+typedef enum { PNG, JPG, BMP, TGA, HDR } ExportFormat;
 
 // Typy filtrów
 typedef enum {
@@ -33,8 +38,8 @@ struct Frame {
 //  NOTE: free the pixels arr za pomocą stbi_image_free(image_data.pixels);
 typedef struct {
   int width;
+  int channels; // Rgb, rgba etc.
   int height;
-  int channels;          // Rgb, rgba etc.
   unsigned char *pixels; // Pixele do manipulacji już skopiowane z pliku.
 } Image;
 
@@ -57,6 +62,9 @@ void apply_amplify(Image *image_data, double coef); // todo
 
 // formatowanie dla windowsa do rysowania
 void blit_to_frame(Image *src, struct Frame *frame);
+
+void export_image(char const *filename, int width, int height,
+                  unsigned char *pixels, ExportFormat FORMAT);
 
 static BITMAPINFO frame_bitmap_info;
 
@@ -151,6 +159,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
     UpdateWindow(window_handle);
   }
 
+  export_image("out", image_data.width, image_data.height, image_data.pixels,
+               JPG);
   // WARN: cleanup
   stbi_image_free(image_data.pixels);
 
@@ -401,4 +411,38 @@ void apply_amplify(Image *image_data, double coef) {
   }
 
   // TODO
+}
+
+void export_image(char const *filename, int width, int height,
+                  unsigned char *pixels, ExportFormat FORMAT) {
+
+  int quality =
+      100; // jpg ma wybór quality od 0 do 100. puki co hardcoduje bo nie wiem
+           // jak to info będzie podawane. stbi_write_jpg(filename, width,
+           // height, 4, pixels, width * 4, quality);
+  char *extention;
+
+  switch (FORMAT) {
+  case PNG:
+    extention = ".png";
+    stbi_write_png(strcat((char*)filename, extention), width, height, 4, pixels, width * 4);
+    break;
+  case JPG:
+    extention = ".jpg";
+    stbi_write_png(strcat((char*)filename, extention), width, height, 4, pixels,
+                   quality);
+    break;
+  case BMP:
+    extention = ".bmp";
+    stbi_write_png(strcat((char*)filename, extention), width, height, 4, pixels, width * 4);
+    break;
+  case TGA:
+    extention = ".tga";
+    stbi_write_png(strcat((char*)filename, extention), width, height, 4, pixels, width * 4);
+    break;
+  case HDR:
+    extention = ".hdr";
+    stbi_write_png(strcat((char*)filename, extention), width, height, 4, pixels, width * 4);
+    break;
+  }
 }
