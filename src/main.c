@@ -415,6 +415,7 @@ void apply_amplify(Image *image_data, double coef) {
   // TODO
 }
 
+// jest szansa, że edytor krzyczy na liczbe argumentów w bmp, tga i hdr. compiles just fine so leave it or test it whatever.
 void export_image(char const *filename, int width, int height,
                   unsigned char *pixels, ExportFormat FORMAT) {
 
