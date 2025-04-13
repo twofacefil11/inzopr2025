@@ -1,6 +1,7 @@
 // TODO: czytanie headerów z stb_image może mieć problem z unicodem, trzeba się
 // tym zająć. przeczytać usage i remarks z headerów.
 #define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 #define UNICODE
 #define _UNICODE
 
@@ -72,7 +73,7 @@ static HBITMAP frame_bitmap = 0;
 static HDC frame_device_context = 0;
 
 // TEST
-static Filter test_filter_type = BLUR;
+static Filter test_filter_type = NEGATIVE;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
                    int nCmdShow) {
@@ -161,6 +162,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
 
   export_image("out", image_data.width, image_data.height, image_data.pixels,
                JPG);
+
   // WARN: cleanup
   stbi_image_free(image_data.pixels);
 
@@ -434,15 +436,15 @@ void export_image(char const *filename, int width, int height,
     break;
   case BMP:
     extention = ".bmp";
-    stbi_write_png(strcat((char*)filename, extention), width, height, 4, pixels, width * 4);
+    stbi_write_png(strcat((char*)filename, extention), width, height, 4, pixels);
     break;
   case TGA:
     extention = ".tga";
-    stbi_write_png(strcat((char*)filename, extention), width, height, 4, pixels, width * 4);
+    stbi_write_png(strcat((char*)filename, extention), width, height, 4, pixels);
     break;
   case HDR:
     extention = ".hdr";
-    stbi_write_png(strcat((char*)filename, extention), width, height, 4, pixels, width * 4);
+    stbi_write_png(strcat((char*)filename, extention), width, height, 4, pixels);
     break;
   }
 }
