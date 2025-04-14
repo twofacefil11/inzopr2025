@@ -38,7 +38,7 @@ LRESULT CALLBACK WindowProcessMessage(HWND, UINT, WPARAM, LPARAM);
 // formatowanie dla windowsa do rysowania
 void blit_to_frame(Image *src, struct Frame *frame);
 
-void export_image(char const *filename, int width, int height,
+void export_image(char *filename, int width, int height,
                   unsigned char *pixels, ExportFormat FORMAT);
 
 static BITMAPINFO frame_bitmap_info;
@@ -48,8 +48,8 @@ static HDC frame_device_context = 0;
 
 // TEST
 static Filter test_filter_type = NEGATIVE;
-const char* input_image = "test_assets/test.jpg";
-const char* output_image = "build/output/out";
+char* input_image = "test_assets/test.jpg";
+char* output_image = "build/output/out";
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
                    int nCmdShow) {
@@ -76,7 +76,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
   static HWND window_handle;
 
   // trzeba poda
-  SetWindowLongPtr(window_handle, GWLP_USERDATA, (LONG_PTR)&app);
 
   window_handle = CreateWindow(
       window_class_name,
@@ -87,6 +86,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
   if (window_handle == NULL)
     return -1;
 
+  SetWindowLongPtr(window_handle, GWLP_USERDATA, (LONG_PTR)&app);
   // Struct reprezentujący załadowany obraz, gd
 
   Image image_data;
@@ -200,7 +200,6 @@ LRESULT CALLBACK WindowProcessMessage(HWND window_handle, UINT message,
 
   case WM_DESTROY: {
     quit = true;
-    free(app);
   } break; // kunic
 
   case WM_PAINT: {
@@ -248,7 +247,7 @@ LRESULT CALLBACK WindowProcessMessage(HWND window_handle, UINT message,
 }
 
 // jest szansa, że edytor krzyczy na liczbe argumentów w bmp, tga i hdr. compiles just fine so leave it or test it whatever.
-void export_image(char const *filename, int width, int height,
+void export_image(char *filename, int width, int height,
                   unsigned char *pixels, ExportFormat FORMAT) {
 
   int quality =
