@@ -41,6 +41,17 @@ Skrypty powinny być w stanie oszacować, czy VS22 jest zainstalowane w **domyś
 
 W przyszłości skrypty z **pewnością** zmienią się, gdy zdefiniujemy tryby kompilacji dla **DEBUG**, **TESTING**, oraz obsługe **LOGGING**.
 
+Po kompilacji na chwile obecną, program i output znajdziesz w:
+
+```shell
+/inzopr2025
+└── build
+    ├── out.exe
+    └── /output
+        └── out.*
+
+```
+
 Jeżeli ktoś umie i chce, to niech ogarnie `.sln` dla VS22. Ja tego nie potrzebuje do szczęścia.
 
 ## Platform
