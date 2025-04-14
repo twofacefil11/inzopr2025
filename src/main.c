@@ -5,8 +5,8 @@
 #define UNICODE
 #define _UNICODE
 
-#include "../include/stb_image.h"
-#include "../include/stb_image_write.h"
+#include "stb_image.h"
+#include "stb_image_write.h"
 #include <stdint.h>
 #include <string.h>
 #include <windows.h>
