@@ -1,7 +1,7 @@
 *.exe
 *.obj
 *.o
-
+*_TODO.md
 build/*
 !build/output/
 build/output/*

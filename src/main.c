@@ -5,11 +5,13 @@
 #define UNICODE
 #define _UNICODE
 
-#include "stb_image.h"
-#include "stb_image_write.h"
 #include <stdint.h>
 #include <string.h>
 #include <windows.h>
+
+#include "stb_image.h"
+#include "stb_image_write.h"
+#include "filters.h"
 
 // #include <stdbool.h>  //winkwink
 typedef enum { false, true } bool;
@@ -17,15 +19,6 @@ typedef enum { false, true } bool;
 static bool quit = false;
 
 typedef enum { PNG, JPG, BMP, TGA, HDR } ExportFormat;
-
-// Typy filtrów
-typedef enum {
-  NO_FILTER, /*!< Nic nie robi */
-  BW,        /*!< Black and White */
-  NEGATIVE,  /*!< Odwraca kolory */
-  AMPLIFY,
-  BLUR
-} Filter;
 
 // frame prosto dla windowsa
 struct Frame {
@@ -35,31 +28,12 @@ struct Frame {
                     // samodzielnie na tą array.
 } frame = {0};
 
-// Image i metadane podane z stb_image.
-//  NOTE: free the pixels arr za pomocą stbi_image_free(image_data.pixels);
-typedef struct {
-  int width;
-  int channels; // Rgb, rgba etc.
-  int height;
-  unsigned char *pixels; // Pixele do manipulacji już skopiowane z pliku.
-} Image;
-
 typedef struct {
   Image *image_data;
   struct Frame *frame;
 } AppState;
 
 LRESULT CALLBACK WindowProcessMessage(HWND, UINT, WPARAM, LPARAM);
-
-void apply_filter(
-    Image *image_data,
-    Filter filter_type); // możliwe że to zniknie na poczet MW_COMMAND
-
-// specificfilter functions
-void apply_black_and_white(Image *image_data);
-void apply_negative(Image *image_data);
-void apply_blur(Image *image_data, unsigned char *ref_pixels);
-void apply_amplify(Image *image_data, double coef); // todo
 
 // formatowanie dla windowsa do rysowania
 void blit_to_frame(Image *src, struct Frame *frame);
@@ -202,37 +176,6 @@ void blit_to_frame(Image *src, struct Frame *dst) {
       dst->pixels[dst_index] = (a << 24) | (r << 16) | (g << 8) | b;
     }
   }
-}
-
-// Ta logika powinna być raczej w MW_COMMAND (jak będzie UI)
-void apply_filter(Image *image_data, Filter filter_type) {
-
-  switch (filter_type) {
-
-  case NO_FILTER: // do nothing of course
-    break;
-
-  case BW:
-    apply_black_and_white(image_data); // TODO
-    break;
-
-  case NEGATIVE:
-    apply_negative(image_data); // TODO
-    break;
-
-  case AMPLIFY:
-    apply_amplify(image_data, 1.50); // TODO
-    break;
-
-  case BLUR:
-    apply_blur(image_data, image_data->pixels);
-    break;
-
-  default:
-    return;
-  }
-
-  return;
 }
 
 LRESULT CALLBACK WindowProcessMessage(HWND window_handle, UINT message,

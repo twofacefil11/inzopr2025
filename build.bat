@@ -40,12 +40,23 @@ if exist %BUILD_DIR% (
 
 mkdir %BUILD_DIR%
 
-:: Compile
-cl /Iinclude /Fo:%BUILD_DIR%\main.obj /Fe:%BUILD_DIR%\out.exe src\main.c user32.lib gdi32.lib
+:: Compile each .c file
+cl /Iinclude /c /Fo:%BUILD_DIR%\main.obj src\main.c
+cl /Iinclude /c /Fo:%BUILD_DIR%\filters.obj src\filters.c
 if errorlevel 1 (
     echo Compilation failed.
     exit /b 1
 )
+
+:: Link
+cl /Fe:%BUILD_DIR%\out.exe %BUILD_DIR%\main.obj %BUILD_DIR%\filters.obj user32.lib gdi32.lib
+
+if errorlevel 1 (
+    echo Linking failed.
+    exit /b 1
+)
+REM :: Compile
+REM cl /Iinclude /Fo:%BUILD_DIR%\main.obj /Fe:%BUILD_DIR%\out.exe src\main.c user32.lib gdi32.lib
 
 :: Run the executable
 %BUILD_DIR%\out.exe
