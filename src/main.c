@@ -74,6 +74,8 @@ static HDC frame_device_context = 0;
 
 // TEST
 static Filter test_filter_type = NEGATIVE;
+const char* input_image = "test_assets/test.jpg";
+const char* output_image = "build/output/out";
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
                    int nCmdShow) {
@@ -118,7 +120,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
   // Tutaj ładujemy do buffera info o obrazku trzeba to ędzie wyabstrachowac
   //
   // jakoś potem, jak będą UI calls
-  image_data.pixels = stbi_load("../test_assets/test.png", &image_data.width,
+  image_data.pixels = stbi_load(input_image, &image_data.width,
                                 &image_data.height, &image_data.channels, 4);
 
   // sztuczny resize na początku działania programu just in case, podobno dobre.
@@ -159,8 +161,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
     InvalidateRect(window_handle, NULL, FALSE);
     UpdateWindow(window_handle);
   }
-
-  export_image("out", image_data.width, image_data.height, image_data.pixels,
+  //ważne:
+  //WARN: wprpwadzmy ścieżki z POZIOMU, Z KTÓREGO BĘDZIEMY ODPALAĆ PROGRAM. NIE Z "PUNKTU WIDZENIA" main.c
+  export_image(output_image, image_data.width, image_data.height, image_data.pixels,
                JPG);
 
   // WARN: cleanup

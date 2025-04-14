@@ -1,7 +1,3 @@
-REM call "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
-REM cl main.c -Fe:a.exe user32.lib gdi32.lib
-REM a.exe
-
 @echo off
 setlocal enabledelayedexpansion
 
@@ -18,9 +14,9 @@ if "!VS_PATH!"=="" if exist "C:\Program Files\Microsoft Visual Studio\2022\Commu
     set "VS_PATH=C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat"
 )
 
-:: Error if neither found
+:: Neither is found
 if "!VS_PATH!"=="" (
-    echo Oj chyba nie masz VisualS tudio. 
+    echo Oj... Chyba nie masz Visual Studio. 
     exit /b 1
 )
 
@@ -31,14 +27,26 @@ if errorlevel 1 (
     exit /b 1
 )
 
-:: Compile the C program
-cl main.c -Fe:a.exe user32.lib gdi32.lib
+:: Setup build dirs
+set BUILD_DIR=build
+set BACKUP_DIR=build\build_last
+
+:: Backup previous build
+if exist %BUILD_DIR% (
+    echo Backing up previous build to %BACKUP_DIR%...
+    if exist %BACKUP_DIR% rd /s /q %BACKUP_DIR%
+    ren %BUILD_DIR% %BACKUP_DIR%
+)
+
+mkdir %BUILD_DIR%
+
+:: Compile
+cl /Iinclude /Fo:%BUILD_DIR%\main.obj /Fe:%BUILD_DIR%\out.exe src\main.c user32.lib gdi32.lib
 if errorlevel 1 (
     echo Compilation failed.
     exit /b 1
 )
 
 :: Run the executable
-a.exe
-
+%BUILD_DIR%\out.exe
 
