@@ -40,21 +40,27 @@ if exist %BUILD_DIR% (
 
 mkdir %BUILD_DIR%
 
-:: Compile each .c file
-cl /Iinclude /c /Fo:%BUILD_DIR%\main.obj src\main.c
-cl /Iinclude /c /Fo:%BUILD_DIR%\filters.obj src\filters.c
-if errorlevel 1 (
-    echo Compilation failed.
-    exit /b 1
+:: Compile each .c file into .obj files
+for %%f in (src\*.c) do (
+    cl /Iinclude /c /Fo:%BUILD_DIR%\%%~nf.obj %%f
+    if errorlevel 1 (
+        echo Compilation failed for %%f.
+        exit /b 1
+    )
 )
 
-:: Link
-cl /Fe:%BUILD_DIR%\out.exe %BUILD_DIR%\main.obj %BUILD_DIR%\filters.obj user32.lib gdi32.lib
+:: Link all the .obj files
+set OBJ_FILES=
+for %%f in (%BUILD_DIR%\*.obj) do (
+    set OBJ_FILES=!OBJ_FILES! %%f
+)
 
+cl /Fe:%BUILD_DIR%\out.exe %OBJ_FILES% user32.lib gdi32.lib
 if errorlevel 1 (
     echo Linking failed.
     exit /b 1
 )
+
 REM :: Compile
 REM cl /Iinclude /Fo:%BUILD_DIR%\main.obj /Fe:%BUILD_DIR%\out.exe src\main.c user32.lib gdi32.lib
 
