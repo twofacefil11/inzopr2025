@@ -1,5 +1,4 @@
 #include "filters.h"
-#include <stdint.h>
 
 
 // Ta logika powinna być raczej w MW_COMMAND (jak będzie UI)

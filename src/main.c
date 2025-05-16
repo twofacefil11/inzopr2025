@@ -6,35 +6,34 @@
 #define UNICODE
 #define _UNICODE
 
-#define ID_COMBOBOX 1001
 
 #include <stdint.h>
-#include <string.h>
 #include <windows.h>
-
-#include <commdlg.h> // for GetOpenFileName
-//
-#include "filters.h"
-#include "stb_image.h"
-#include "stb_image_write.h"
-
-#include "app_state.h"
-
 #include <stdbool.h> //winkwink i had myown for a secnd itmight have broken sth
+//
+// #include "stb_image.h"
+// #include "stb_image_write.h"
+
+// #include "image.h"
+#include "app_state.h"
+#include "filters.h"
+#include "io.h"
 
 LRESULT CALLBACK WindowProcessMessage(HWND, UINT, WPARAM, LPARAM);
 
 // formatowanie dla windowsa do rysowania
 void blit_to_frame(Image *src, struct Frame *frame);
 
-void export_image(char *filename, int width, int height, unsigned char *pixels,
-                  ExportFormat FORMAT);
+// void export_image(char *filename, int width, int height, unsigned char *pixels,
+//                   ExportFormat FORMAT);
 
-static BITMAPINFO frame_bitmap_info;
-static HBITMAP frame_bitmap = 0;
-static HDC frame_device_context = 0;
+// static BITMAPINFO frame_bitmap_info;
+// static HBITMAP frame_bitmap = 0;
+// static HDC frame_device_context = 0;
+//
+// WŁAŚNIE PRÓBUJE PRZENIEŚĆ TO DO STATE
 
-// ------------------------------------------------
+
 void LoadImageFromFile(AppState *app, const wchar_t *filepath) {
   if (!app)
     return;
@@ -86,6 +85,8 @@ void LoadImageFromFile(AppState *app, const wchar_t *filepath) {
   // Redraw window
   InvalidateRect(app->hwnd_main, NULL, TRUE);
   UpdateWindow(app->hwnd_main);
+
+// ------------------------------------------------
 }
 
 
@@ -102,10 +103,9 @@ void OpenFileDialog(HWND hwnd, AppState *app) {
   ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
 
   if (GetOpenFileName(&ofn)) {
-      LoadImageFromFile(app, ofn.lpstrFile);
+    LoadImageFromFile(app, ofn.lpstrFile);
   }
 }
-
 // ------------------------------------------------
 // TEST
 static Filter test_filter_type = NEGATIVE;
@@ -118,6 +118,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
   AppState app = {0}; // możliwe że należało by mallocowac pamięć zobaczymy
   struct Frame fr;
   app.frame = &fr;
+  app.frame->frame_bitmap = 0;
+  app.frame->frame_device_context = 0;
+
 
   app.shouldQuit = false;
 
@@ -131,11 +134,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
 
   // windowsowy sposób reprezentacja przestrzeni do rysowania
   // nie przejmujmy się tym dla naszego dobra
-  frame_bitmap_info.bmiHeader.biSize = sizeof(frame_bitmap_info.bmiHeader);
-  frame_bitmap_info.bmiHeader.biPlanes = 1;
-  frame_bitmap_info.bmiHeader.biBitCount = 32;
-  frame_bitmap_info.bmiHeader.biCompression = BI_RGB;
-  frame_device_context = CreateCompatibleDC(0);
+  app.frame->frame_bitmap_info.bmiHeader.biSize = sizeof(app.frame->frame_bitmap_info.bmiHeader);
+  app.frame->frame_bitmap_info.bmiHeader.biPlanes = 1;
+  app.frame->frame_bitmap_info.bmiHeader.biBitCount = 32;
+  app.frame->frame_bitmap_info.bmiHeader.biCompression = BI_RGB;
+  app.frame->frame_device_context = CreateCompatibleDC(0);
 
   static HWND window_handle;
 
@@ -283,149 +286,4 @@ void blit_to_frame(Image *src, struct Frame *dst) {
   }
 }
 
-LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
-                                      LPARAM lParam) {
 
-  AppState *app = (AppState *)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-
-  switch (message) {
-
-  case WM_QUIT: // jak jest puste to windows robi default
-                // case WM_COMMAND: // TODO: tutaj będą sygnały z UI
-  case WM_CREATE: {
-    CREATESTRUCT *cs = (CREATESTRUCT *)lParam;
-    app = (AppState *)cs->lpCreateParams;
-    SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)app);
-
-    // Create UI controls here now that hwnd_main is known:
-    HINSTANCE hInstance = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_HINSTANCE);
-
-    app->hwnd_combobox = CreateWindowEx(
-        0, L"COMBOBOX", NULL, CBS_DROPDOWNLIST | WS_CHILD | WS_VISIBLE, 10, 10,
-        150, 100, hwnd, (HMENU)ID_COMBOBOX, hInstance, NULL);
-
-    SendMessage(app->hwnd_combobox, CB_ADDSTRING, 0, (LPARAM)L"Negative");
-    SendMessage(app->hwnd_combobox, CB_ADDSTRING, 0, (LPARAM)L"Grayscale");
-    SendMessage(app->hwnd_combobox, CB_ADDSTRING, 0, (LPARAM)L"Brightness");
-    SendMessage(app->hwnd_combobox, CB_SETCURSEL, 0, 0);
-
-    app->hwnd_sidebar = CreateWindowEx(
-        0, L"STATIC", NULL, WS_CHILD | WS_VISIBLE | SS_NOTIFY | WS_BORDER, 0, 0,
-        200, 100, hwnd, NULL, hInstance, NULL);
-
-    break;
-  }
-    // TODO:inicjalizacja żeczy po stworzeniu
-    // okna case WM_COMMAND: //TODO: messages z UI
-    //   switch (LOWORD(wParam)) {
-    //     case ID_FILTER_GRAYSCALE:
-    //       apply_filter(pixel_array, FILTER_GRAYSCALE);
-    //       InvalidateRect(hwnd, NULL, TRUE); // Trigger redraw
-    //       break;
-    //       // More filters...
-    //   }
-    //     break;
-
-  case WM_DESTROY: {
-    app->shouldQuit = true;
-    PostQuitMessage(0);
-    break; // kunic
-  }
-  case WM_COMMAND: { /// TODO
-    int control_id = LOWORD(wParam);
-    int event = HIWORD(wParam);
-
-    switch (control_id) {
-    case 1:
-      OpenFileDialog(app->hwnd_main, app);
-    }
-    // if (control_id == 10 && event == CBN_SELCHANGE) {
-    //   int selected = SendMessage((HWND)lParam, CB_GETCURSEL, 0, 0);
-    //   // show/hide input fields depending on `selected`
-    // }
-  } break;
-
-  case WM_PAINT: {
-    static PAINTSTRUCT paint;
-    static HDC device_context;
-    device_context = BeginPaint(hwnd, &paint);
-    // blit_to_frame(app->image_data , &frame);
-
-    // BitBlt to całkiem oldschoolowa nazwa look it up, its cool
-    BitBlt(device_context, paint.rcPaint.left, paint.rcPaint.top,
-           paint.rcPaint.right - paint.rcPaint.left,
-           paint.rcPaint.bottom - paint.rcPaint.top, frame_device_context,
-           paint.rcPaint.left, paint.rcPaint.top, SRCCOPY);
-
-    EndPaint(hwnd, &paint);
-  } break;
-
-  // resize msg
-  case WM_SIZE: {
-    // TODO: centerowanie and all
-    app->frame->width = LOWORD(lParam);
-    app->frame->height = HIWORD(lParam);
-
-    frame_bitmap_info.bmiHeader.biWidth = app->frame->width;
-    frame_bitmap_info.bmiHeader.biHeight = app->frame->height;
-
-    if (frame_bitmap)
-      DeleteObject(frame_bitmap);
-
-    frame_bitmap = CreateDIBSection(NULL, &frame_bitmap_info, DIB_RGB_COLORS,
-                                    (void **)&app->frame->pixels, 0, 0);
-
-    SelectObject(frame_device_context, frame_bitmap);
-
-    // Te dwa redrawują. One does not call wm_print by hand.
-    InvalidateRect(hwnd, NULL, FALSE);
-    UpdateWindow(hwnd);
-
-  } break; // DONT // ASK
-
-  default: {
-    return DefWindowProc(hwnd, message, wParam, lParam);
-  }
-  }
-  return 0;
-}
-
-// jest szansa, że edytor krzyczy na liczbe argumentów w bmp, tga i hdr.
-// compiles just fine so leave it or test it whatever.
-void export_image(char *filename, int width, int height, unsigned char *pixels,
-                  ExportFormat FORMAT) {
-
-  int quality =
-      100; // jpg ma wybór quality od 0 do 100. puki co hardcoduje bo nie wiem
-           // jak to info będzie podawane. stbi_write_jpg(filename, width,
-           // height, 4, pixels, width * 4, quality);
-  char *extention;
-
-  switch (FORMAT) {
-  case PNG:
-    extention = ".png";
-    stbi_write_png(strcat((char *)filename, extention), width, height, 4,
-                   pixels, width * 4);
-    break;
-  case JPG:
-    extention = ".jpg";
-    stbi_write_jpg(strcat((char *)filename, extention), width, height, 4,
-                   pixels, quality);
-    break;
-  case BMP:
-    extention = ".bmp";
-    stbi_write_bmp(strcat((char *)filename, extention), width, height, 4,
-                   pixels);
-    break;
-  case TGA:
-    extention = ".tga";
-    stbi_write_tga(strcat((char *)filename, extention), width, height, 4,
-                   pixels);
-    break;
-  case HDR:
-    extention = ".hdr";
-    stbi_write_hdr(strcat((char *)filename, extention), width, height, 4,
-                   (float *)pixels);
-    break;
-  }
-}
