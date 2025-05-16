@@ -55,7 +55,7 @@ for %%f in (%BUILD_DIR%\*.obj) do (
     set OBJ_FILES=!OBJ_FILES! %%f
 )
 
-cl /Fe:%BUILD_DIR%\out.exe %OBJ_FILES% user32.lib gdi32.lib
+cl /Fe:%BUILD_DIR%\out.exe %OBJ_FILES% user32.lib gdi32.lib comdlg32.lib
 if errorlevel 1 (
     echo Linking failed.
     exit /b 1
