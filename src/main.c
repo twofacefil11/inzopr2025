@@ -1,113 +1,100 @@
-// TODO: czytanie headerów z stb_image może mieć problem z unicodem, trzeba się
+// ----------------------------------------------------------------------------
+// main.c
+// Responsibilities:
+// boilerplate...
+// init(); -> main window class/register and state init
+// while {
+//   msg processing. ONLY
+// }
+// ----------------------------------------------------------------------------
+
+// NOTE(s)
+// - nic nie dawać po loopie oprócz returna. cleanup ma być w odpowiednijej msg
 //
+
+
+// TODO: czytanie headerów z stb_image może mieć problem z unicodem, trzeba się
 // tym zająć. przeczytać usage i remarks z headerów.
+
+// stbi będzie zupełnie wywalone z tąd. pui co powoduje problemy
+#ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
+#endif
+#ifndef STB_IMAGE_WRITE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#endif
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #define UNICODE
 #define _UNICODE
 
-
+#include <stdbool.h> //winkwink i had myown for a secnd itmight have broken sth
 #include <stdint.h>
 #include <windows.h>
-#include <stdbool.h> //winkwink i had myown for a secnd itmight have broken sth
-//
-// #include "stb_image.h"
-// #include "stb_image_write.h"
 
-// #include "image.h"
 #include "app_state.h"
+#include "winproc.h"
 #include "filters.h"
 #include "io.h"
 
 LRESULT CALLBACK WindowProcessMessage(HWND, UINT, WPARAM, LPARAM);
 
-// formatowanie dla windowsa do rysowania
-void blit_to_frame(Image *src, struct Frame *frame);
 
-// void export_image(char *filename, int width, int height, unsigned char *pixels,
-//                   ExportFormat FORMAT);
+// PONIŻSZY BLOK DZIAŁAŁ I ŁADOWAŁ OBRAZKI POPRAWNIE ALE PRZENIOSŁĘM GO
+// STATELESS DO IMAGE.C
+// TODO TODO TODO TODO trzeba to będzie debagować w sensie to co jest w image.
+// void LoadImageFromFile(AppState *app, const wchar_t *filepath) {
+//   if (!app)
+//     return;
 
-// static BITMAPINFO frame_bitmap_info;
-// static HBITMAP frame_bitmap = 0;
-// static HDC frame_device_context = 0;
-//
-// WŁAŚNIE PRÓBUJE PRZENIEŚĆ TO DO STATE
+//   // Free previous image if exists
+//   if (app->image_data && app->image_data->pixels) {
+//     stbi_image_free(app->image_data->pixels);
+//     app->image_data->pixels = NULL;
+//   }
 
+//   // Convert wchar_t filepath to UTF-8 for stbi_load (stb_image expects
+//   char*) int len = WideCharToMultiByte(CP_UTF8, 0, filepath, -1, NULL, 0,
+//   NULL, NULL); if (len == 0)
+//     return; // conversion failed
 
-void LoadImageFromFile(AppState *app, const wchar_t *filepath) {
-  if (!app)
-    return;
+//   char *utf8path = malloc(len);
+//   if (!utf8path)
+//     return;
 
-  // Free previous image if exists
-  if (app->image_data && app->image_data->pixels) {
-    stbi_image_free(app->image_data->pixels);
-    app->image_data->pixels = NULL;
-  }
+//   WideCharToMultiByte(CP_UTF8, 0, filepath, -1, utf8path, len, NULL, NULL);
 
-  // Convert wchar_t filepath to UTF-8 for stbi_load (stb_image expects char*)
-  int len = WideCharToMultiByte(CP_UTF8, 0, filepath, -1, NULL, 0, NULL, NULL);
-  if (len == 0)
-    return; // conversion failed
+//   int width, height, channels;
+//   unsigned char *pixels = stbi_load(utf8path, &width, &height, &channels, 4);
+//   free(utf8path);
 
-  char *utf8path = malloc(len);
-  if (!utf8path)
-    return;
+//   if (!pixels) {
+//     MessageBox(app->hwnd_main, L"Failed to load image.", L"Error",
+//                MB_ICONERROR);
+//     return;
+//   }
 
-  WideCharToMultiByte(CP_UTF8, 0, filepath, -1, utf8path, len, NULL, NULL);
+//   // Update image data in app state
+//   if (!app->image_data) {
+//     app->image_data = malloc(sizeof(Image));
+//     if (!app->image_data) {
+//       stbi_image_free(pixels);
+//       return;
+//     }
+//   }
 
-  int width, height, channels;
-  unsigned char *pixels = stbi_load(utf8path, &width, &height, &channels, 4);
-  free(utf8path);
+//   app->image_data->width = width;
+//   app->image_data->height = height;
+//   app->image_data->channels = 4; // forcing 4 channels output
+//   app->image_data->pixels = pixels;
 
-  if (!pixels) {
-    MessageBox(app->hwnd_main, L"Failed to load image.", L"Error",
-               MB_ICONERROR);
-    return;
-  }
+//   // Resize frame (send WM_SIZE to main window)
+//   SendMessage(app->hwnd_main, WM_SIZE, 0, MAKELPARAM(width, height));
 
-  // Update image data in app state
-  if (!app->image_data) {
-    app->image_data = malloc(sizeof(Image));
-    if (!app->image_data) {
-      stbi_image_free(pixels);
-      return;
-    }
-  }
+//   // Redraw window
+//   InvalidateRect(app->hwnd_main, NULL, TRUE);
+//   UpdateWindow(app->hwnd_main);
 
-  app->image_data->width = width;
-  app->image_data->height = height;
-  app->image_data->channels = 4; // forcing 4 channels output
-  app->image_data->pixels = pixels;
-
-  // Resize frame (send WM_SIZE to main window)
-  SendMessage(app->hwnd_main, WM_SIZE, 0, MAKELPARAM(width, height));
-
-  // Redraw window
-  InvalidateRect(app->hwnd_main, NULL, TRUE);
-  UpdateWindow(app->hwnd_main);
-
-// ------------------------------------------------
-}
-
-
-void OpenFileDialog(HWND hwnd, AppState *app) {
-  OPENFILENAME ofn = {0};
-  wchar_t file_name[MAX_PATH] = L"";
-
-  ofn.lStructSize = sizeof(ofn);
-  ofn.hwndOwner = hwnd;
-  ofn.lpstrFile = file_name;
-  ofn.nMaxFile = MAX_PATH;
-  ofn.lpstrFilter =
-      L"Image Files\0*.png;*.jpg;*.bmp;*.tga;*.hdr\0All Files\0*.*\0";
-  ofn.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
-
-  if (GetOpenFileName(&ofn)) {
-    LoadImageFromFile(app, ofn.lpstrFile);
-  }
-}
-// ------------------------------------------------
-// TEST
+// TEST DEBUG WHATEVER
 static Filter test_filter_type = NEGATIVE;
 char *input_image = "test_assets/test.jpg";
 char *output_image = "build/output/out";
@@ -121,7 +108,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
   app.frame->frame_bitmap = 0;
   app.frame->frame_device_context = 0;
 
-
   app.shouldQuit = false;
 
   // deklaracja klasy okna głównego aplikacji. win32 stuff, nie dotykać raczej
@@ -134,7 +120,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
 
   // windowsowy sposób reprezentacja przestrzeni do rysowania
   // nie przejmujmy się tym dla naszego dobra
-  app.frame->frame_bitmap_info.bmiHeader.biSize = sizeof(app.frame->frame_bitmap_info.bmiHeader);
+  app.frame->frame_bitmap_info.bmiHeader.biSize =
+      sizeof(app.frame->frame_bitmap_info.bmiHeader);
   app.frame->frame_bitmap_info.bmiHeader.biPlanes = 1;
   app.frame->frame_bitmap_info.bmiHeader.biBitCount = 32;
   app.frame->frame_bitmap_info.bmiHeader.biCompression = BI_RGB;
@@ -162,6 +149,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
       window_handle, NULL, hInstance, &app);
 
   /// MENU NA GÓRZE
+  /// ask why...
   HMENU hMenubar = CreateMenu();
   HMENU hFile = CreateMenu();
   AppendMenu(hFile, MF_STRING, 1, L"Open...");
@@ -199,6 +187,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
   // Tutaj ładujemy do buffera info o obrazku trzeba to ędzie wyabstrachowac
   //
   // jakoś potem, jak będą UI calls
+  // MARK
   image_data.pixels = stbi_load(input_image, &image_data.width,
                                 &image_data.height, &image_data.channels, 4);
 
@@ -219,16 +208,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
   // TEST: Tę funckje powinny wywoływać elementy UI. puki co test, no filter.
   apply_filter(&image_data, test_filter_type); // TEST puki co tylko raz
   // po tym będzie też basic correction coś. ale to ogarniemy;
+  MSG message;
 
-  while (!app.shouldQuit) {
-
-    // ------- OFF - LIMITS -------
-    static MSG message = {0};
-    while (PeekMessage(&message, NULL, 0, 0, PM_REMOVE)) {
-      TranslateMessage(&message);
-      DispatchMessage(&message);
-    }
-    // ------- OFF - LIMITS -------
+  while (GetMessage(&message, NULL, 0, 0)) {
+    TranslateMessage(&message);
+    DispatchMessage(&message);
 
     // TEST: wiado dla windowsa żeby resizować jeżeli trzeba. puki co łatwiej
     // dać tyle pixeli ile ma obraz
@@ -236,8 +220,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
     //             MAKELPARAM(client_width, client_height));
 
     // translate image to frame
-    // blit_to_frame(&image_data, &frame);
-    blit_to_frame(app.image_data, app.frame);
+    //// To ważne: tego tu nie może być, należy zrobić system który powiadamia
+    /// że coś się zmieniło i należy redrawawać
+    blit_to_frame(app.image_data, app.frame); 
+    // mark
 
     InvalidateRect(app.hwnd_main, NULL, FALSE);
     UpdateWindow(app.hwnd_main);
@@ -249,41 +235,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
                image_data.pixels, JPG);
 
   // WARN: cleanup
+  // MARK
   stbi_image_free(image_data.pixels);
 
   return 0;
 }
-
-void blit_to_frame(Image *src, struct Frame *dst) {
-  // TODO: logika kontroli wielkości obrazu i okna i środkowania and all that
-
-  // puki co są takie półśrodki, żeby na pewno nie nabroić
-  int width = (src->width < dst->width) ? src->width : dst->width;
-  int height = (src->height < dst->height) ? src->height : dst->height;
-
-  for (int y = 0; y < height; y++) {
-    for (int x = 0; x < width; x++) {
-
-      // trzeba odliczać index, bo array jest jedno wymiarowa.
-      int src_index = (y * src->width + x) * 4; // forcujemy 4 channele
-
-      // trzeba obliczyć index jak w src_inde i przeżucić
-      // veritally bo windows tak chce.
-      int dst_index = ((dst->height - 1 - y) * dst->width + x);
-
-      // WARN: Jest szansa, że jakieś kolory będą czasem zamienione?
-      // Jeżeli tak to: dst->pixels[dst_index] = (a << 24) | (b << 16) | (g <<
-      // 8) | r;
-
-      uint8_t a, r, g, b;
-      r = src->pixels[src_index + 0];
-      g = src->pixels[src_index + 1];
-      b = src->pixels[src_index + 2];
-      a = 255;
-
-      dst->pixels[dst_index] = (a << 24) | (r << 16) | (g << 8) | b;
-    }
-  }
-}
-
 

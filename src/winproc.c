@@ -1,5 +1,6 @@
 #include "winproc.h"
 
+
 LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
                                       LPARAM lParam) {
 
@@ -66,13 +67,16 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
     static PAINTSTRUCT paint;
     static HDC device_context;
     device_context = BeginPaint(hwnd, &paint);
+
+    // blit_to_frame(app->image_data, app->frame);// to będzie tu musiało być eventually 
     // blit_to_frame(app->image_data , &frame);
 
     // BitBlt to całkiem oldschoolowa nazwa look it up, its cool
     BitBlt(device_context, paint.rcPaint.left, paint.rcPaint.top,
            paint.rcPaint.right - paint.rcPaint.left,
-           paint.rcPaint.bottom - paint.rcPaint.top, app->frame->frame_device_context,
-           paint.rcPaint.left, paint.rcPaint.top, SRCCOPY);
+           paint.rcPaint.bottom - paint.rcPaint.top,
+           app->frame->frame_device_context, paint.rcPaint.left,
+           paint.rcPaint.top, SRCCOPY);
 
     EndPaint(hwnd, &paint);
   } break;
@@ -89,8 +93,9 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
     if (app->frame->frame_bitmap)
       DeleteObject(app->frame->frame_bitmap);
 
-    app->frame->frame_bitmap = CreateDIBSection(NULL, &app->frame->frame_bitmap_info, DIB_RGB_COLORS,
-                                    (void **)&app->frame->pixels, 0, 0);
+    app->frame->frame_bitmap =
+        CreateDIBSection(NULL, &app->frame->frame_bitmap_info, DIB_RGB_COLORS,
+                         (void **)&app->frame->pixels, 0, 0);
 
     SelectObject(app->frame->frame_device_context, app->frame->frame_bitmap);
 

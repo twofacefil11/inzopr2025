@@ -1,7 +1,8 @@
 #ifndef FILTERS_H
 #define FILTERS_H
 
-#include "Image.h"
+#include "image.h"
+#include <stdint.h>
 
 // Typy filtrów
 typedef enum {
