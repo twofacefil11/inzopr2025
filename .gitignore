@@ -1,0 +1,19 @@
+*.exe
+*.obj
+*.o
+
+build/*
+!build/output/
+build/output/*
+!build/output/**/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# temporary files
+*.bak
+*.tmp
+
+
+
