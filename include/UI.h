@@ -1,0 +1,67 @@
+#pragma once
+
+#ifndef UI_H
+#define UI_H
+
+#define UNICODE
+#define _UNICODE
+
+#include <stdint.h>
+#include <windows.h>
+#include <commctrl.h>
+
+#include "Image.h"
+/// Foreward declaration or something, nie można includwać window_precudure bo
+/// będzie include loop.
+LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
+                                      LPARAM lParam);
+
+//-------------------------------------------------------------------------------
+
+typedef struct {
+  int width;  // NOTE: a może by to tak dać do Dim stuct?
+  int height; // NOTE: to też.
+
+  BITMAPINFO frame_bitmap_info;
+  HBITMAP frame_bitmap;
+  HDC device_context;
+} DisplayBuffer;
+
+//-------------------------------------------------------------------------------
+
+typedef struct {
+
+  DisplayBuffer display_buffer;
+
+  // tu jest tego za dużo,
+  // ja nie wiem w sumei czy to będczie potrzebne
+  HWND hwnd_main; // manual init.
+  HWND hSidebar;
+  HWND hComboBox;
+  HMENU hMenubar;
+  HMENU hExportMenu;
+  // HWND sliderLabels[4]; // <-- Add this for labels
+  // HWND sliders[4];
+  HFONT hFont;
+  HBRUSH hComboBgBrush;
+
+} UI;
+
+typedef struct {
+  int system_width;
+  int system_height;
+  int width;
+  int height;
+  int x;
+  int y;
+} Window_initial_position;
+
+/// TODO
+
+DisplayBuffer make_display_buffer(HWND hwnd);
+Window_initial_position getWindowInfo();
+int choose_new_file_path(HWND hwnd, OPENFILENAME *ofn, char *filename);
+int show_save_dialog(HWND hwnd, char *out_path);
+int init_UI(HWND hwnd, UI* ui);
+//-------------------------------------------------------------------------------
+#endif // UI_H
