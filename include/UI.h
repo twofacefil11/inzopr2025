@@ -16,6 +16,8 @@
 LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
                                       LPARAM lParam);
 
+LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
+                           UINT_PTR wp, DWORD_PTR lp);
 //-------------------------------------------------------------------------------
 
 typedef struct {
@@ -27,10 +29,9 @@ typedef struct {
   HDC device_context;
 } DisplayBuffer;
 
-//-------------------------------------------------------------------------------
+// //-------------------------------------------------------------------------------
 
 typedef struct {
-
   DisplayBuffer display_buffer;
 
   // tu jest tego za dużo,
@@ -62,6 +63,7 @@ DisplayBuffer make_display_buffer(HWND hwnd);
 Window_initial_position getWindowInfo();
 int choose_new_file_path(HWND hwnd, OPENFILENAME *ofn, char *filename);
 int show_save_dialog(HWND hwnd, char *out_path);
-int init_UI(HWND hwnd, UI* ui);
+int init_UI(HWND hwnd, UI *ui);
 //-------------------------------------------------------------------------------
+//
 #endif // UI_H

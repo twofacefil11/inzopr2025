@@ -34,7 +34,6 @@ Window_initial_position getWindowInfo() {
   return wip;
 }
 
-
 /// This might have to be here since it might know what stasate is
 int init_UI(HWND hwnd, UI *ui) {
 
@@ -91,11 +90,12 @@ int init_UI(HWND hwnd, UI *ui) {
   //                    hwnd,      // Parent window
   //                    (HMENU)10, // ID
   //                    ((LPCREATESTRUCT)lParam)->hInstance, NULL);
-
+  
+  fprintf(stderr, "j");
   /// COMBOBOX
   HWND hComboBox = CreateWindowExW(
       0, L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 10, 10,
-      160, 120, hwnd, (HMENU)100, hInstance, NULL);
+      160, 120, ui->hSidebar, (HMENU)100, hInstance, NULL);
 
   SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Blur");
   SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Sharpen");
@@ -120,7 +120,7 @@ int show_save_dialog(HWND hwnd, char *out_path) {
   char initial_dir[MAX_PATH] = {0};
 
   OPENFILENAMEA ofn = {0};
-   
+
   ExpandEnvironmentStringsA("%USERPROFILE%\\Documents", initial_dir, MAX_PATH);
 
   // Use default filename
@@ -131,10 +131,12 @@ int show_save_dialog(HWND hwnd, char *out_path) {
   ofn.lpstrFile = file_path;
   ofn.nMaxFile = MAX_PATH;
   ofn.lpstrTitle = "Zapisz jako: ";
-  ofn.lpstrFilter = "PNG Files\0*.png\0JPEG Files\0*.jpg;*.jpeg\0BMP Files\0*.bmp\0TGA Files\0*.tga\0HDR Files\0*.hdr\0All Files\0*.*\0";
+  ofn.lpstrFilter =
+      "PNG Files\0*.png\0JPEG Files\0*.jpg;*.jpeg\0BMP Files\0*.bmp\0TGA "
+      "Files\0*.tga\0HDR Files\0*.hdr\0All Files\0*.*\0";
   ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
   // ofn.lpstrFilter = "PNG Files\0*.png\0JPEG Files\0*.jpg;*.jpeg\0BMP "
-                    // "Files\0*.bmp\0All Files\0*.*\0";
+  // "Files\0*.bmp\0All Files\0*.*\0";
 
   if (GetSaveFileNameA(&ofn)) {
     strncpy(out_path, file_path, MAX_PATH);
@@ -145,4 +147,3 @@ int show_save_dialog(HWND hwnd, char *out_path) {
 }
 
 // ----------------------------------------------------------------
-

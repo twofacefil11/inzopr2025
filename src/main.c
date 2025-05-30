@@ -20,6 +20,8 @@
 
 #include "State.h"
 
+// ----------------------------------------------------------------
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
                    int nCmdShow) {
 
@@ -30,8 +32,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
   register_class(appState, hInstance, MAIN_WINDOW_CLASS_NAME);
 
   Window_initial_position wip = getWindowInfo();
-  appState->UI_handles.hwnd_main = CreateWindowExW(
-      WS_EX_DLGMODALFRAME, MAIN_WINDOW_CLASS_NAME, "Xest wyswietlania obrazu",
+  appState->UI_handles.hwnd_main = CreateWindowW(
+      MAIN_WINDOW_CLASS_NAME, (LPCWSTR)("Xest wyswietlania obrazu"),
       WS_OVERLAPPEDWINDOW | WS_VISIBLE, wip.x, wip.y, wip.width, wip.height,
       NULL, NULL, hInstance, appState);
 
@@ -46,7 +48,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
     TranslateMessage(&message);
     DispatchMessage(&message);
   }
-  
+
   // ----------------------------------------------------------------
   return 0;
 }

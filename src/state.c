@@ -1,7 +1,7 @@
 #include "state.h"
 #include <windows.h>
 
-// State *init_state(HINSTANCE hInstance) {
+// --------------------------------------------------------------
 
 State *init_state(HINSTANCE hInstance) { /// TODO
 
@@ -19,9 +19,9 @@ State *init_state(HINSTANCE hInstance) { /// TODO
 
 /// f: ta funckja istnieje żeby było schludniej w mainie
 void register_class(State *state, HINSTANCE hInstance,
-                    const wchar_t *window_class_name) {
+                  const unsigned short *window_class_name) {
 
-  static WNDCLASS window_class = {0};
+  static WNDCLASSW window_class = {0};
   window_class.lpfnWndProc = WindowProcessMessage;
   window_class.hCursor = LoadCursor(NULL, IDC_ARROW);
   window_class.hInstance = hInstance;
@@ -31,7 +31,7 @@ void register_class(State *state, HINSTANCE hInstance,
 
 // --------------------------------------------------------------
 
-// TODO: możliwe że to jest iekompletne. zobaczymy co z bufferem
+// TODO: możliwe że to jest niekompletne. zobaczymy co z bufferem
 int free_state(State *state) {
   free_image(&state->current_image);
   free_image(&state->original_image);
@@ -61,3 +61,4 @@ void enable_export(State *app_state) {
   EnableMenuItem(app_state->UI_handles.hMenubar, 5, MF_ENABLED); 
 
 }
+

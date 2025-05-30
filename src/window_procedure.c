@@ -23,7 +23,17 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
     app = (State *)cs->lpCreateParams;
     SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)app);
 
+    app->UI_handles.hSidebar =
+        CreateWindowExW(0, L"STATIC", NULL,
+                        WS_CHILD | WS_BORDER, // debug visible
+                        10, 10, 200, 400, hwnd, (HMENU)200, NULL, (LPVOID)app);
+
+    SetWindowSubclass(app->UI_handles.hSidebar, PanelProc, 0, (DWORD_PTR)app);
+
     init_UI(hwnd, &app->UI_handles);
+
+    /// init side panel może do funkcji
+
     break;
   }
   case WM_CTLCOLORLISTBOX: { // MOżliwe że pozmieniamy kiedyś kolory. będzie
@@ -52,7 +62,7 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
   }
   // ----------------------------------------------------
   case WM_COMMAND:
-    
+
     switch (LOWORD(wParam)) {
     // ==========================================
     case 1: { // Open
@@ -70,7 +80,7 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
       ofn.Flags = OFN_OVERWRITEPROMPT | OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST |
                   OFN_HIDEREADONLY;
       ofn.lpstrTitle = "Wybierz nowy obraz: ";
- 
+
       if (GetOpenFileNameA(&ofn)) {
 
         free_image(&app->current_image);
@@ -78,7 +88,9 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
         set_current_image_path(app, file_path);
         if (load_image(&app->current_image, app->current_image_path)) {
           app->flags.IMAGE_LOADED = true;
-          enable_export(app); // state mashine hmm może nie. 
+          enable_export(app); // state mashine hmm może nie.
+          ShowWindow(app->UI_handles.hSidebar,
+                     SW_SHOW); // maybe out of here later if i made a checker
           load_image(&app->original_image, app->current_image_path);
           InvalidateRect(hwnd, &client_rect, TRUE);
         }
@@ -120,36 +132,36 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
     case 6: { // About
     } break;
       // -------------------EFFECTS-DROPDOWN--------------------
-    case 100: {
-      if (HIWORD(wParam) == CBN_SELCHANGE) {
-        HWND hComboBox = (HWND)lParam;
-        int sel = (int)SendMessage(hComboBox, CB_GETCURSEL, 0, 0);
+    // case 100: {
+    //   if (HIWORD(wParam) == CBN_SELCHANGE) {
+    //     HWND hComboBox = (HWND)lParam;
+    //     int sel = (int)SendMessage(hComboBox, CB_GETCURSEL, 0, 0);
 
-        // React to selection
-        switch (sel) {
-        case 0:
-          // apply_blur(&app->current_image);
-          break;
-        case 1:
-          // apply_sharpen(&app->current_image);
-          break;
-        case 2:
-          // apply_sepia(&app->current_image);
-          break;
-        case 3:
-          apply_amplify(&app->current_image);
-          break;
-        case 4:
-          apply_negative(&app->current_image);
-          break;
-        case 5:
-          apply_monochrome(&app->current_image);
-          break;
-        }
+    //     // React to selection
+    //     switch (sel) {
+    //     case 0:
+    //       // apply_blur(&app->current_image);
+    //       break;
+    //     case 1:
+    //       // apply_sharpen(&app->current_image);
+    //       break;
+    //     case 2:
+    //       // apply_sepia(&app->current_image);
+    //       break;
+    //     case 3:
+    //       apply_amplify(&app->current_image);
+    //       break;
+    //     case 4:
+    //       apply_negative(&app->current_image);
+    //       break;
+    //     case 5:
+    //       apply_monochrome(&app->current_image);
+    //       break;
+    //     }
 
-        InvalidateRect(hwnd, NULL, TRUE); // force redraw
-      }
-    } break;
+    //     InvalidateRect(hwnd, NULL, TRUE); // force redraw
+    //   }
+    // } break;
     }
     // ==========================================
   case WM_SIZE: {
@@ -184,19 +196,13 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
     app->UI_handles.display_buffer.frame_bitmap_info.bmiHeader.biBitCount = 32;
     app->UI_handles.display_buffer.frame_bitmap_info.bmiHeader.biCompression =
         BI_RGB;
+
     FillRect(hdc, &client_rect, (HBRUSH)(COLOR_WINDOW + 1));
-    SetDIBitsToDevice(hdc, 0, 0, //
-                      img->width, img->height, 0, 0, 0,
-                      img->height, img->pixels,
-                      &app->UI_handles.display_buffer.frame_bitmap_info,
-                      DIB_RGB_COLORS);
-    // SetDIBitsToDevice(hdc, 0, 0, //
-    //                   client_rect.right, client_rect.bottom, 0, 0, 0,
-    //                   client_rect.bottom, img->pixels,
-    //                   &app->UI_handles.display_buffer.frame_bitmap_info,
-    //                   DIB_RGB_COLORS);
-        
-    EndPaint(hwnd, &ps);
+
+    SetDIBitsToDevice(
+        hdc, 0, 0, //
+        img->width, img->height, 0, 0, 0, img->height, img->pixels,
+        &app->UI_handles.display_buffer.frame_bitmap_info, DIB_RGB_COLORS);
 
   } break;
   // ----------------------------------------------------
@@ -206,4 +212,77 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
     // ----------------------------------------------------
   }
   return 0;
+}
+
+LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
+                           UINT_PTR wp, DWORD_PTR lp) {
+  State *app = (State *)lp;
+
+  switch (msg) {
+  // case WM_CREATE: {
+  //   CREATESTRUCT *cs = (CREATESTRUCT *)lParam;
+  //   app = (State *)cs->lpCreateParams;
+  //   SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)app);
+  //   return 0;
+  // }
+  case WM_PAINT: {
+    PAINTSTRUCT ps;
+    HDC hdc = BeginPaint(hwnd, &ps);
+    RECT rc;
+    GetClientRect(hwnd, &rc);
+
+    // Fill with light gray
+    HBRUSH hBrush = CreateSolidBrush(RGB(230, 230, 230));
+    FillRect(hdc, &rc, hBrush);
+    DeleteObject(hBrush);
+
+    EndPaint(hwnd, &ps);
+    return 0;
+  }
+  case WM_NCDESTROY:
+    RemoveWindowSubclass(hwnd, PanelProc, wp);
+    break;
+  // In side panel WndProc:
+  case WM_COMMAND: {
+    // -------------------EFFECTS-DROPDOWN--------------------
+    switch (LOWORD(wParam)) {
+    case 100: {
+      if (HIWORD(wParam) == CBN_SELCHANGE) {
+        HWND hComboBox = (HWND)lParam;
+        int sel = (int)SendMessage(hComboBox, CB_GETCURSEL, 0, 0);
+
+        // React to selection
+        switch (sel) {
+        case 0:
+          // apply_blur(&app->current_image);
+          break;
+        case 1:
+          // apply_sharpen(&app->current_image);
+          break;
+        case 2:
+          // apply_sepia(&app->current_image);
+          break;
+        case 3:
+          apply_amplify(&app->current_image);
+          break;
+        case 4:
+          apply_negative(&app->current_image);
+          break;
+        case 5:
+          apply_monochrome(&app->current_image);
+          break;
+        }
+
+        InvalidateRect(app->UI_handles.hwnd_main, NULL, TRUE); // force redraw
+      }
+      break;
+    }
+    // case rn SendMessage(GetParent(hwnd), msg, wParam, lParam);
+    default:
+      app = (State *)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+      break;
+    }
+  }
+  }
+  return DefSubclassProc(hwnd, msg, wParam, lParam);
 }
