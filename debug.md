@@ -1,6 +1,6 @@
 BUGS:
-- [ ]: hide combobox on startup
-- [ ]: block export options and back when useless.
+- [x]: hide combobox on startup
+- [x]: block export options and back when useless.
 - [x]: export file picker
 - [ ]: nazwa okna. żeby nie krzyczało 
 - [x]: Glitchuje przy resizowaniu zbyt wiele.
@@ -20,7 +20,6 @@ TODO:
 - [ ]: undo (event que)
 - [ ]: maaaaybe redo
 - [ ]: fit to frame, zoom things like that.
-- [ ]: EVENT SYSTEM
 - [ ]: Error handling cmon
 - [ ]: Debug mode
 - [ ]: Logging mode xddd

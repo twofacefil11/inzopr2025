@@ -1,6 +1,7 @@
 // #include "Image.h"
 
 #include "window_procedure.h"
+#include "Filters.h"
 #include "Image.h"
 #include <windef.h>
 #include <windows.h>
@@ -10,7 +11,6 @@
 
 LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
                                       LPARAM lParam) {
-
   State *app = (State *)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
   switch (message) {
@@ -132,36 +132,36 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
     case 6: { // About
     } break;
       // -------------------EFFECTS-DROPDOWN--------------------
-    // case 100: {
-    //   if (HIWORD(wParam) == CBN_SELCHANGE) {
-    //     HWND hComboBox = (HWND)lParam;
-    //     int sel = (int)SendMessage(hComboBox, CB_GETCURSEL, 0, 0);
+      // case 100: {
+      //   if (HIWORD(wParam) == CBN_SELCHANGE) {
+      //     HWND hComboBox = (HWND)lParam;
+      //     int sel = (int)SendMessage(hComboBox, CB_GETCURSEL, 0, 0);
 
-    //     // React to selection
-    //     switch (sel) {
-    //     case 0:
-    //       // apply_blur(&app->current_image);
-    //       break;
-    //     case 1:
-    //       // apply_sharpen(&app->current_image);
-    //       break;
-    //     case 2:
-    //       // apply_sepia(&app->current_image);
-    //       break;
-    //     case 3:
-    //       apply_amplify(&app->current_image);
-    //       break;
-    //     case 4:
-    //       apply_negative(&app->current_image);
-    //       break;
-    //     case 5:
-    //       apply_monochrome(&app->current_image);
-    //       break;
-    //     }
+      //     // React to selection
+      //     switch (sel) {
+      //     case 0:
+      //       // apply_blur(&app->current_image);
+      //       break;
+      //     case 1:
+      //       // apply_sharpen(&app->current_image);
+      //       break;
+      //     case 2:
+      //       // apply_sepia(&app->current_image);
+      //       break;
+      //     case 3:
+      //       apply_amplify(&app->current_image);
+      //       break;
+      //     case 4:
+      //       apply_negative(&app->current_image);
+      //       break;
+      //     case 5:
+      //       apply_monochrome(&app->current_image);
+      //       break;
+      //     }
 
-    //     InvalidateRect(hwnd, NULL, TRUE); // force redraw
-    //   }
-    // } break;
+      //     InvalidateRect(hwnd, NULL, TRUE); // force redraw
+      //   }
+      // } break;
     }
     // ==========================================
   case WM_SIZE: {
@@ -217,7 +217,6 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
 LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
                            UINT_PTR wp, DWORD_PTR lp) {
   State *app = (State *)lp;
-
   switch (msg) {
   // case WM_CREATE: {
   //   CREATESTRUCT *cs = (CREATESTRUCT *)lParam;
@@ -245,6 +244,7 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
   // In side panel WndProc:
   case WM_COMMAND: {
     // -------------------EFFECTS-DROPDOWN--------------------
+    fprintf(stderr, "ojoj to musi sie pojawić plz");
     switch (LOWORD(wParam)) {
     case 100: {
       if (HIWORD(wParam) == CBN_SELCHANGE) {
@@ -264,6 +264,7 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
           break;
         case 3:
           apply_amplify(&app->current_image);
+          // show_filter_controls(hwnd, 3);
           break;
         case 4:
           apply_negative(&app->current_image);

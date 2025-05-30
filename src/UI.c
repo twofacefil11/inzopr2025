@@ -1,5 +1,4 @@
 #include "UI.h"
-#include <minwinbase.h>
 //-------------------------------------------------------------------------------
 
 /// This should resize lazily. empty, but sized on startup
@@ -75,9 +74,61 @@ int init_UI(HWND hwnd, UI *ui) {
   AppendMenu(hMenubar, MF_POPUP, (UINT_PTR)hInfo, L"Info");
 
   SetMenu(hwnd, hMenubar);
+  //-0------------------FONT-----------------------
+  ui->hFont =
+      CreateFont(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
+                 OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
+                 DEFAULT_PITCH | FF_SWISS, L"Segoe UI");
 
+  //-----------------------------------------------
+  // ustawienie czcionki dla combobox
   ui->hMenubar = hMenubar;
   ui->hExportMenu = hExport;
+
+  /// -----------MONO--------------------------------------------------
+  /// R
+  ui->filter_controls.hMonochrome = CreateWindowEx(
+      0, L"STATIC", NULL,
+      WS_CHILD | WS_VISIBLE, // Add WS_VISIBLE only if showing by default
+      10, 50, 180, 380, ui->hSidebar, NULL, hInstance, NULL);
+
+  HWND hSliderMonochromeRed = CreateWindowEx(
+      0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 35,
+      160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+  HWND hLabel1 = CreateWindowEx(
+      0, L"STATIC", L"Red:", WS_CHILD | WS_VISIBLE, 10, 10, 80, 20,
+      ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+  // G
+  HWND hSliderMonochromeGreen = CreateWindowEx(
+      0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 95,
+      160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+
+  HWND hLabel2 = CreateWindowEx(
+      0, L"STATIC", L"Green:", WS_CHILD | WS_VISIBLE, 10, 70, 80, 20,
+      ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+  // B
+  HWND hSliderMonochromeBlue = CreateWindowEx(
+      0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 155,
+      160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+
+  HWND hLabel3 = CreateWindowEx(
+      0, L"STATIC", L"Blue:", WS_CHILD | WS_VISIBLE, 10, 135, 80, 20,
+      ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+  
+
+  // Set slider range and position
+  SendMessage(hSliderMonochromeRed, TBM_SETRANGE, TRUE, MAKELPARAM(-100, 100));
+  SendMessage(hSliderMonochromeRed, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
+  SendMessage(hSliderMonochromeGreen, TBM_SETRANGE, TRUE, MAKELPARAM(-100, 100));
+  SendMessage(hSliderMonochromeGreen, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
+  SendMessage(hSliderMonochromeBlue, TBM_SETRANGE, TRUE, MAKELPARAM(-100, 100));
+  SendMessage(hSliderMonochromeBlue, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
+  // ustaw czcionki labelom
+  SendMessage(hLabel1, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
+  SendMessage(hLabel2, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
+  SendMessage(hLabel3, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
+
+  /// -------------------------------------------------------------
 
   /// SIDEBAR
   ///  TEST to należey dać do init_UI oraz przemyśleć tego miejsce w state.
@@ -90,8 +141,9 @@ int init_UI(HWND hwnd, UI *ui) {
   //                    hwnd,      // Parent window
   //                    (HMENU)10, // ID
   //                    ((LPCREATESTRUCT)lParam)->hInstance, NULL);
-  
-  fprintf(stderr, "j");
+
+  /// SIDEBAR WOULD Be  NICE HERE BUT IT CANT;
+
   /// COMBOBOX
   HWND hComboBox = CreateWindowExW(
       0, L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 10, 10,
@@ -105,13 +157,8 @@ int init_UI(HWND hwnd, UI *ui) {
   SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Monochrome");
   SendMessage(hComboBox, CB_SETCURSEL, 0, 0); // Select first item
 
-  HFONT hFont =
-      CreateFont(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
-                 OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
-                 DEFAULT_PITCH | FF_SWISS, L"Segoe UI");
+  SendMessage(hComboBox, WM_SETFONT, (WPARAM)ui->hFont, MAKELPARAM(TRUE, 0));
 
-  // ustawienie czcionki dla combobox
-  SendMessage(hComboBox, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(TRUE, 0));
   return 0;
 }
 
@@ -147,3 +194,12 @@ int show_save_dialog(HWND hwnd, char *out_path) {
 }
 
 // ----------------------------------------------------------------
+// MARK
+// void show_filter_controls(HWND hwnd, Filter_type filter) {
+//   switch (filter) {
+//     case 3:
+//        // ShowWindow(HWND hWnd, int nCmdShow)
+//     break;
+//   }
+//   return;
+// }

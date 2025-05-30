@@ -8,8 +8,9 @@
 
 #include <stdint.h>
 #include <windows.h>
+#include <limits.h>
 #include <commctrl.h>
-
+#include "Filters.h"
 #include "Image.h"
 /// Foreward declaration or something, nie można includwać window_precudure bo
 /// będzie include loop.
@@ -31,6 +32,18 @@ typedef struct {
 
 // //-------------------------------------------------------------------------------
 
+//-------------------------------------------------------------------------------
+
+typedef struct {
+  HWND hBlur;
+  HWND hSharpen;
+  HWND hSepie;
+  HWND hAmplify;
+  HWND hNegative;
+  HWND hMonochrome;
+
+} Filter_contorl_group_handles;
+//-------------------------------------------------------------------------------
 typedef struct {
   DisplayBuffer display_buffer;
 
@@ -41,10 +54,9 @@ typedef struct {
   HWND hComboBox;
   HMENU hMenubar;
   HMENU hExportMenu;
-  // HWND sliderLabels[4]; // <-- Add this for labels
-  // HWND sliders[4];
   HFONT hFont;
   HBRUSH hComboBgBrush;
+  Filter_contorl_group_handles filter_controls;
 
 } UI;
 
@@ -56,7 +68,6 @@ typedef struct {
   int x;
   int y;
 } Window_initial_position;
-
 /// TODO
 
 DisplayBuffer make_display_buffer(HWND hwnd);
@@ -64,6 +75,7 @@ Window_initial_position getWindowInfo();
 int choose_new_file_path(HWND hwnd, OPENFILENAME *ofn, char *filename);
 int show_save_dialog(HWND hwnd, char *out_path);
 int init_UI(HWND hwnd, UI *ui);
+void show_filter_controls(HWND hwnd, Filter_type filter);
 //-------------------------------------------------------------------------------
 //
 #endif // UI_H
