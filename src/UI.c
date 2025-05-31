@@ -202,8 +202,6 @@ void enable_export(UI *ui) {
   EnableMenuItem(ui->hExportMenu, 23, MF_ENABLED);
   EnableMenuItem(ui->hExportMenu, 24, MF_ENABLED);
   EnableMenuItem(ui->hExportMenu, 25, MF_ENABLED);
-  EnableMenuItem(ui->hMenubar, 4, MF_ENABLED);
-  EnableMenuItem(ui->hMenubar, 5, MF_ENABLED);
 }
 
 // MARK

@@ -168,7 +168,9 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
     InvalidateRect(hwnd, NULL, FALSE);
     break;
   }
-  // ----------------------------------------------------
+
+    // ----------------------------------------------------
+
   case WM_PAINT: {
     PAINTSTRUCT ps;
     HDC hdc = BeginPaint(hwnd, &ps);
@@ -241,7 +243,8 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
   case WM_NCDESTROY:
     RemoveWindowSubclass(hwnd, PanelProc, wp);
     break;
-  // In side panel WndProc:
+    // In side panel WndProc:
+
   case WM_COMMAND: {
     // -------------------EFFECTS-DROPDOWN--------------------
     switch (LOWORD(wParam)) {

@@ -37,7 +37,7 @@ typedef struct {
 typedef struct {
   HWND hBlur;
   HWND hSharpen;
-  HWND hSepie;
+  HWND hSepia;
   HWND hAmplify;
   HWND hNegative;
   HWND hMonochrome;

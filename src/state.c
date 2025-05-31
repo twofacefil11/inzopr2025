@@ -12,6 +12,11 @@ State *init_state(HINSTANCE hInstance) { /// TODO
   app_state->current_filter_type = NO_FILTER;
   app_state->hInstance = hInstance;
 
+  // musi być 1 bo jest mnożone w filtrze
+  app_state->filter_params->amplify_r = 1;
+  app_state->filter_params->amplify_g = 1;
+  app_state->filter_params->amplify_b = 1;
+
   return app_state; // change that
 }
 
