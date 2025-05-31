@@ -2,7 +2,7 @@
 
 // coś jak będziemy debugować testować i logować to pozamieniać na result
 // return type.
-void apply_monochrome(Image *image_data) {
+void apply_monochrome(Image *image_data, Filter_params *filter_params) {
 
   for (int y = 0; y < image_data->height; y++) {
     for (int x = 0; x < image_data->width; x++) {
@@ -16,13 +16,10 @@ void apply_monochrome(Image *image_data) {
 
       int bw_value = (r + g + b) / 3;
 
-      image_data->pixels[i + 0] = bw_value;
-      image_data->pixels[i + 1] = bw_value;
-      image_data->pixels[i + 2] = bw_value;
+      image_data->pixels[i + 0] = bw_value + filter_params->mono_b;
+      image_data->pixels[i + 1] = bw_value + filter_params->mono_g;
+      image_data->pixels[i + 2] = bw_value + filter_params->mono_r;
       image_data->pixels[i + 3] = 255; // alpha i think
-
-      // zapaku do komórki
-      // image_data->pixels[i] = (a << 24) | (r << 16) | (g << 8) | b;
     }
   }
   // TODO
@@ -92,8 +89,7 @@ void apply_blur(Image *image_data, unsigned char *ref_pixels) {
   // }
 }
 
-void apply_amplify(Image *image_data) {
-  double coef = 0.2;
+void apply_amplify(Image *image_data, Filter_params *filter_params) {
   for (int y = 0; y < image_data->height; y++) {
     for (int x = 0; x < image_data->width; x++) {
       int i = (y * image_data->width + x) * 4; // forcujemy 4 channele
@@ -104,9 +100,9 @@ void apply_amplify(Image *image_data) {
       g = image_data->pixels[i + 1];
       b = image_data->pixels[i + 2];
 
-      image_data->pixels[i + 0] = r * coef;
-      image_data->pixels[i + 1] = g * coef;
-      image_data->pixels[i + 2] = b * coef;
+      image_data->pixels[i + 0] = r * filter_params->amplify_r;
+      image_data->pixels[i + 1] = g * filter_params->amplify_g;
+      image_data->pixels[i + 2] = b * filter_params->amplify_b;
       image_data->pixels[i + 3] = 255; // alpha i think
     }
   }
@@ -124,7 +120,7 @@ void apply_sepia(Image *image_data) {
     r = image_data->pixels[i + 2];
     g = image_data->pixels[i + 1];
     b = image_data->pixels[i + 0];
-
+    
     weight_red = (r * 0.393) + (g * 0.769) + (b * 0.189);
     weight_green = (r * 0.349) + (g * 0.686) + (b * 0.168);
     weight_blue = (r * 0.272) + (g * 0.534) + (b * 0.131);

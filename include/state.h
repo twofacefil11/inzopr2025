@@ -1,4 +1,3 @@
-// ----------------------------------------------------------------------------
 #ifndef STATE_H
 #define STATE_H
 
@@ -20,17 +19,23 @@ typedef struct {
 
 //-------------------------------------------------------------------------------
 
+
 typedef struct {
-  Image original_image;
-  Image current_image;
-  char current_image_path[MAX_PATH];
-  char export_file_path[MAX_PATH];
+
   HINSTANCE hInstance;
   UI UI_handles;
+
   Flags flags;
+
+  Image original_image;
+  Image current_image;
+
+  char current_image_path[MAX_PATH];
+  char export_file_path[MAX_PATH];
 
   // to zostanie zamienione na pointer do koleiki
   Filter_type current_filter_type;
+  Filter_params *filter_params;
 
 } State;
 

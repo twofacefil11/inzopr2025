@@ -14,7 +14,21 @@ BUGS:
 - [ ]: 
 - [ ]: 
 - [ ]: 
+
+FILTERS:
+- [x]: Monochrome
+- [x]: Sepia
+- [x]: amplify
+- [x]: Negative 
+- [ ]: BLUR
+- [ ]: sharpen
+- [ ]:
+- [ ]:
+- [ ]:
+- [ ]:
+
 TODO:
+- [ ]: TIE IN CONTROLS TO FILTERS
 - [ ]: hide and show ui when needed.
 - [ ]: info: about
 - [ ]: undo (event que)
@@ -23,7 +37,11 @@ TODO:
 - [ ]: Error handling cmon
 - [ ]: Debug mode
 - [ ]: Logging mode xddd
-- [ ]: 
+- [ ]:
+- [ ]:
+- [ ]:
+- [ ]:
+
 UX:
 - [ ]: image or nice background when empty
 - [ ]: image picker not fullscreen, normal window (that might be just me)

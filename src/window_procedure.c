@@ -244,7 +244,6 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
   // In side panel WndProc:
   case WM_COMMAND: {
     // -------------------EFFECTS-DROPDOWN--------------------
-    fprintf(stderr, "ojoj to musi sie pojawić plz");
     switch (LOWORD(wParam)) {
     case 100: {
       if (HIWORD(wParam) == CBN_SELCHANGE) {
@@ -263,14 +262,14 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
           apply_sepia(&app->current_image);
           break;
         case 3:
-          apply_amplify(&app->current_image);
+          apply_amplify(&app->current_image, app->filter_params);
           // show_filter_controls(hwnd, 3);
           break;
         case 4:
           apply_negative(&app->current_image);
           break;
         case 5:
-          apply_monochrome(&app->current_image);
+          apply_monochrome(&app->current_image, app->filter_params);
           break;
         }
 
