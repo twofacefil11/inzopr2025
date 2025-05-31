@@ -117,35 +117,29 @@ void apply_amplify(Image *image_data) {
 void apply_sepia(Image *image_data) {
   double weight_red, weight_green, weight_blue;
 
-  for (int y = 0; y < image_data->height; y++) {
-    for (int x = 0; x < image_data->width; x++) {
-      int i = (y * image_data->width + x) * 4;
-      // tr = 0.393R + 0.769G + 0.189B
-      // tg = 0.349R + 0.686G + 0.168B
-      // tb = 0.272R + 0.534G + 0.131B
+  for (int x = 0; x < image_data->height * image_data->width; x++) {
+    int i = x * 4;
 
-      uint8_t r, g, b;
-      r = image_data->pixels[i + 0];
-      g = image_data->pixels[i + 1];
-      b = image_data->pixels[i + 2];
+    uint8_t r, g, b;
+    r = image_data->pixels[i + 2];
+    g = image_data->pixels[i + 1];
+    b = image_data->pixels[i + 0];
 
-      weight_red = (r * 0.393) * (g * 0.769) * (b * 0.189);
-      weight_green = (r * 0.349) * (g * 0.686) * (b * 0.168);
-      weight_blue = (r * 0.272) * (g * 0.534) * (b * 0.131);
-      
-      weight_red = (weight_red < 0) ? 0 : weight_red;
-      weight_green= (weight_green < 0) ? 0 : weight_green;
-      weight_blue= (weight_blue < 0) ? 0 : weight_blue;
+    weight_red = (r * 0.393) + (g * 0.769) + (b * 0.189);
+    weight_green = (r * 0.349) + (g * 0.686) + (b * 0.168);
+    weight_blue = (r * 0.272) + (g * 0.534) + (b * 0.131);
 
-      weight_red = (weight_red > 255) ? 255 : weight_red;
-      weight_green= (weight_green > 255) ? 255 : weight_green;
-      weight_blue= (weight_blue > 255) ? 255 : weight_blue;
+    weight_red = (weight_red < 0) ? 0 : weight_red;
+    weight_green = (weight_green < 0) ? 0 : weight_green;
+    weight_blue = (weight_blue < 0) ? 0 : weight_blue;
 
+    weight_red = (weight_red > 255) ? 255 : weight_red;
+    weight_green = (weight_green > 255) ? 255 : weight_green;
+    weight_blue = (weight_blue > 255) ? 255 : weight_blue;
 
-      image_data->pixels[i + 0] =
-      image_data->pixels[i + 1] = weight_green;
-      image_data->pixels[i + 2] = weight_blue;
-      image_data->pixels[i + 3] = 255; // alpha i think
-    }
+    image_data->pixels[i + 2] = (uint8_t)weight_red;
+    image_data->pixels[i + 1] = (uint8_t)weight_green;
+    image_data->pixels[i + 0] = (uint8_t)weight_blue;
+    image_data->pixels[i + 3] = 255; // alpha i think
   }
 }
