@@ -13,9 +13,10 @@ State *init_state(HINSTANCE hInstance) { /// TODO
   app_state->hInstance = hInstance;
 
   // musi być 1 bo jest mnożone w filtrze
-  app_state->filter_params->amplify_r = 1;
-  app_state->filter_params->amplify_g = 1;
-  app_state->filter_params->amplify_b = 1;
+  //
+  app_state->filter_params.amplify_r = 2;
+  app_state->filter_params.amplify_g = 2;
+  app_state->filter_params.amplify_b = 2;
 
   return app_state; // change that
 }

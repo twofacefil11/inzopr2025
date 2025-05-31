@@ -204,11 +204,29 @@ void enable_export(UI *ui) {
   EnableMenuItem(ui->hExportMenu, 25, MF_ENABLED);
 }
 
-// MARK
-// void show_filter_controls(HWND hwnd, Filter_type filter) {
+// void show_filter_controls(HWND filter_control_handle, Filter_type filter) {
 //   switch (filter) {
-//     case 3:
-//        // ShowWindow(HWND hWnd, int nCmdShow)
+//   case BLUR:
+//         // ShowWindow(HWND hWnd, int nCmdShow)
+//         break;
+//   case SHARPEN:
+//     // ShowWindow(HWND hWnd, int nCmdShow)
+//     break;
+//   case SEPIA:
+//     // ShowWindow(HWND hWnd, int nCmdShow)
+//     break;
+//   case AMPLIFY:
+//     ShowWindow(filter_control_handle, SW_SHOW);  
+//     // ShowWindow(HWND hWnd, int nCmdShow)
+//     break;
+//   case NEGATIVE:
+//     // ShowWindow(HWND hWnd, int nCmdShow)
+//     break;
+//   case BW:
+//     // ShowWindow(HWND hWnd, int nCmdShow)
+//     break;
+//   case NO_FILTER:
+//     // ShowWindow(HWND hWnd, int nCmdShow)
 //     break;
 //   }
 //   return;

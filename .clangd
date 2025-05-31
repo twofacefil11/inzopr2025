@@ -8,3 +8,4 @@ CompileFlags:
     - "-I/usr/lib/gcc/x86_64-w64-mingw32/11.4.0/include/c++/x86_64-w64-mingw32"
     - "-Iinclude"
     - "-Isrc"
+

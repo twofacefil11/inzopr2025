@@ -35,7 +35,7 @@ typedef struct {
 
   // to zostanie zamienione na pointer do koleiki
   Filter_type current_filter_type;
-  Filter_params *filter_params;
+  Filter_params filter_params;
 
 } State;
 

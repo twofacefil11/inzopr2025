@@ -37,7 +37,7 @@ TODO:
 - [ ]: Error handling cmon
 - [ ]: Debug mode
 - [ ]: Logging mode xddd
-- [ ]:
+- [ ]: not shure hwo the default value of params should work
 - [ ]:
 - [ ]:
 - [ ]:
