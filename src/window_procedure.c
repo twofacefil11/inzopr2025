@@ -88,7 +88,7 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
         set_current_image_path(app, file_path);
         if (load_image(&app->current_image, app->current_image_path)) {
           app->flags.IMAGE_LOADED = true;
-          enable_export(app); // state mashine hmm może nie.
+          enable_export(&app->UI_handles); // state mashine hmm może nie.
           ShowWindow(app->UI_handles.hSidebar,
                      SW_SHOW); // maybe out of here later if i made a checker
           load_image(&app->original_image, app->current_image_path);

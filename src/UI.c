@@ -95,17 +95,17 @@ int init_UI(HWND hwnd, UI *ui) {
   HWND hSliderMonochromeRed = CreateWindowEx(
       0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 35,
       160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
-  HWND hLabel1 = CreateWindowEx(
-      0, L"STATIC", L"Red:", WS_CHILD | WS_VISIBLE, 10, 10, 80, 20,
-      ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+  HWND hLabel1 = CreateWindowEx(0, L"STATIC", L"Red:", WS_CHILD | WS_VISIBLE,
+                                10, 10, 80, 20, ui->filter_controls.hMonochrome,
+                                NULL, hInstance, NULL);
   // G
   HWND hSliderMonochromeGreen = CreateWindowEx(
       0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 95,
       160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
 
-  HWND hLabel2 = CreateWindowEx(
-      0, L"STATIC", L"Green:", WS_CHILD | WS_VISIBLE, 10, 70, 80, 20,
-      ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+  HWND hLabel2 = CreateWindowEx(0, L"STATIC", L"Green:", WS_CHILD | WS_VISIBLE,
+                                10, 70, 80, 20, ui->filter_controls.hMonochrome,
+                                NULL, hInstance, NULL);
   // B
   HWND hSliderMonochromeBlue = CreateWindowEx(
       0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 155,
@@ -114,12 +114,12 @@ int init_UI(HWND hwnd, UI *ui) {
   HWND hLabel3 = CreateWindowEx(
       0, L"STATIC", L"Blue:", WS_CHILD | WS_VISIBLE, 10, 135, 80, 20,
       ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
-  
 
   // Set slider range and position
   SendMessage(hSliderMonochromeRed, TBM_SETRANGE, TRUE, MAKELPARAM(-100, 100));
   SendMessage(hSliderMonochromeRed, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
-  SendMessage(hSliderMonochromeGreen, TBM_SETRANGE, TRUE, MAKELPARAM(-100, 100));
+  SendMessage(hSliderMonochromeGreen, TBM_SETRANGE, TRUE,
+              MAKELPARAM(-100, 100));
   SendMessage(hSliderMonochromeGreen, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
   SendMessage(hSliderMonochromeBlue, TBM_SETRANGE, TRUE, MAKELPARAM(-100, 100));
   SendMessage(hSliderMonochromeBlue, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
@@ -194,6 +194,18 @@ int show_save_dialog(HWND hwnd, char *out_path) {
 }
 
 // ----------------------------------------------------------------
+
+void enable_export(UI *ui) {
+  EnableMenuItem(ui->hMenubar, (UINT_PTR)ui->hExportMenu, MF_ENABLED);
+  EnableMenuItem(ui->hExportMenu, 21, MF_ENABLED);
+  EnableMenuItem(ui->hExportMenu, 22, MF_ENABLED);
+  EnableMenuItem(ui->hExportMenu, 23, MF_ENABLED);
+  EnableMenuItem(ui->hExportMenu, 24, MF_ENABLED);
+  EnableMenuItem(ui->hExportMenu, 25, MF_ENABLED);
+  EnableMenuItem(ui->hMenubar, 4, MF_ENABLED);
+  EnableMenuItem(ui->hMenubar, 5, MF_ENABLED);
+}
+
 // MARK
 // void show_filter_controls(HWND hwnd, Filter_type filter) {
 //   switch (filter) {

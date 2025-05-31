@@ -49,16 +49,3 @@ void set_current_image_path(State *app_state, char* image_path) {
 }
 
 // ------------------------------------------------------------------
-
-void enable_export(State *app_state) {
-  EnableMenuItem(app_state->UI_handles.hMenubar, (UINT_PTR)app_state->UI_handles.hExportMenu, MF_ENABLED);
-  EnableMenuItem(app_state->UI_handles.hExportMenu, 21, MF_ENABLED); 
-  EnableMenuItem(app_state->UI_handles.hExportMenu, 22, MF_ENABLED); 
-  EnableMenuItem(app_state->UI_handles.hExportMenu, 23, MF_ENABLED); 
-  EnableMenuItem(app_state->UI_handles.hExportMenu, 24, MF_ENABLED); 
-  EnableMenuItem(app_state->UI_handles.hExportMenu, 25, MF_ENABLED); 
-  EnableMenuItem(app_state->UI_handles.hMenubar, 4, MF_ENABLED); 
-  EnableMenuItem(app_state->UI_handles.hMenubar, 5, MF_ENABLED); 
-
-}
-

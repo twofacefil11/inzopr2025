@@ -42,11 +42,12 @@ typedef struct {
 //-------------------------------------------------------------------------------
 
 State *init_state(HINSTANCE hInstance);
+
 void set_current_image_path(State *app_state, char *image_path);
-int free_state(State *app_state); // return an error lol
-void enable_export(State *app_state);
 void register_class(State *state, HINSTANCE hInstance,
                     const unsigned short *window_class_name);
+
+int free_state(State *app_state); // return an error lol
 
 //-------------------------------------------------------------------------------
 

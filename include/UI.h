@@ -76,6 +76,7 @@ int choose_new_file_path(HWND hwnd, OPENFILENAME *ofn, char *filename);
 int show_save_dialog(HWND hwnd, char *out_path);
 int init_UI(HWND hwnd, UI *ui);
 void show_filter_controls(HWND hwnd, Filter_type filter);
+void enable_export(UI* ui);
 //-------------------------------------------------------------------------------
 //
 #endif // UI_H
