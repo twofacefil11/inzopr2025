@@ -260,7 +260,7 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
           // apply_sharpen(&app->current_image);
           break;
         case 2:
-          // apply_sepia(&app->current_image);
+          apply_sepia(&app->current_image);
           break;
         case 3:
           apply_amplify(&app->current_image);

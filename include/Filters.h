@@ -27,6 +27,6 @@ void apply_sharpen(Image *image_data);
 void apply_monochrome(Image *image_data);
 void apply_negative(Image *image_data);
 void apply_amplify(Image *image_data); // todo
-
+void apply_sepia(Image *image_data);
 
 #endif // FILTERS_H
