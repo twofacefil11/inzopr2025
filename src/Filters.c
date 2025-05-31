@@ -132,10 +132,20 @@ void apply_sepia(Image *image_data) {
       weight_red = (r * 0.393) * (g * 0.769) * (b * 0.189);
       weight_green = (r * 0.349) * (g * 0.686) * (b * 0.168);
       weight_blue = (r * 0.272) * (g * 0.534) * (b * 0.131);
+      
+      weight_red = (weight_red < 0) ? 0 : weight_red;
+      weight_green= (weight_green < 0) ? 0 : weight_green;
+      weight_blue= (weight_blue < 0) ? 0 : weight_blue;
 
-      image_data->pixels[i + 0] = weight_red;
+      weight_red = (weight_red > 255) ? 255 : weight_red;
+      weight_green= (weight_green > 255) ? 255 : weight_green;
+      weight_blue= (weight_blue > 255) ? 255 : weight_blue;
+
+
+      image_data->pixels[i + 0] =
       image_data->pixels[i + 1] = weight_green;
       image_data->pixels[i + 2] = weight_blue;
       image_data->pixels[i + 3] = 255; // alpha i think
     }
   }
+}
