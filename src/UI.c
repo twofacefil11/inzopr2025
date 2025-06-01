@@ -85,36 +85,43 @@ int init_UI(HWND hwnd, UI *ui) {
   ui->hMenubar = hMenubar;
   ui->hExportMenu = hExport;
 
+  
   /// -----------MONO--------------------------------------------------
-  /// R
+  
   ui->filter_controls.hMonochrome =
-      CreateWindowEx(0, L"STATIC", NULL,
-                     WS_CHILD | WS_VISIBLE |
-                         SW_HIDE, // Add WS_VISIBLE only if showing by default
-                     10, 50, 180, 380, ui->hSidebar, NULL, hInstance, NULL);
+      CreateWindowEx(0, L"STATIC", NULL, WS_CHILD | WS_VISIBLE | SW_HIDE, 10,
+                     50, 180, 380, ui->hSidebar, NULL, hInstance, NULL);
 
-  HWND hSliderMonochromeRed = CreateWindowEx(
-      0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 35,
-      160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
-  HWND hLabel1 = CreateWindowEx(0, L"STATIC", L"Red:", WS_CHILD | WS_VISIBLE,
-                                10, 10, 80, 20, ui->filter_controls.hMonochrome,
-                                NULL, hInstance, NULL);
-  // G
-  HWND hSliderMonochromeGreen = CreateWindowEx(
-      0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 95,
-      160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+  HWND hSliderMonochromeRed;
+  HWND hSliderMonochromeBlue;
+  HWND hSliderMonochromeGreen;
+  HWND hLabel1, hLabel2, hLabel3;
+   
+  {
+    hLabel1 = CreateWindowEx(0, L"STATIC", L"Red:", WS_CHILD | WS_VISIBLE, 10,
+                             10, 80, 20, ui->filter_controls.hMonochrome, NULL,
+                             hInstance, NULL);
 
-  HWND hLabel2 = CreateWindowEx(0, L"STATIC", L"Green:", WS_CHILD | WS_VISIBLE,
-                                10, 70, 80, 20, ui->filter_controls.hMonochrome,
-                                NULL, hInstance, NULL);
-  // B
-  HWND hSliderMonochromeBlue = CreateWindowEx(
-      0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 155,
-      160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+    hSliderMonochromeRed = CreateWindowEx(
+        0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 35,
+        160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
 
-  HWND hLabel3 = CreateWindowEx(
-      0, L"STATIC", L"Blue:", WS_CHILD | WS_VISIBLE, 10, 135, 80, 20,
-      ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+    hLabel2 = CreateWindowEx(0, L"STATIC", L"Green:", WS_CHILD | WS_VISIBLE, 10,
+                             70, 80, 20, ui->filter_controls.hMonochrome, NULL,
+                             hInstance, NULL);
+
+    hSliderMonochromeGreen = CreateWindowEx(
+        0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 95,
+        160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+
+    hLabel3 = CreateWindowEx(0, L"STATIC", L"Blue:", WS_CHILD | WS_VISIBLE, 10,
+                             135, 80, 20, ui->filter_controls.hMonochrome, NULL,
+                             hInstance, NULL);
+
+    hSliderMonochromeBlue = CreateWindowEx(
+        0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 155,
+        160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+  }
 
   // Set slider range and position
   SendMessage(hSliderMonochromeRed, TBM_SETRANGE, TRUE, MAKELPARAM(-100, 100));
@@ -124,6 +131,7 @@ int init_UI(HWND hwnd, UI *ui) {
   SendMessage(hSliderMonochromeGreen, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
   SendMessage(hSliderMonochromeBlue, TBM_SETRANGE, TRUE, MAKELPARAM(-100, 100));
   SendMessage(hSliderMonochromeBlue, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
+  
   // ustaw czcionki labelom
   SendMessage(hLabel1, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
   SendMessage(hLabel2, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
@@ -133,49 +141,49 @@ int init_UI(HWND hwnd, UI *ui) {
 
   //mark
 
-//   /// R
-//   ui->filter_controls.hMonochrome =
-//       CreateWindowEx(0, L"STATIC", NULL,
-//                      WS_CHILD | WS_VISIBLE |
-//                          SW_HIDE, // Add WS_VISIBLE only if showing by default
-//                      10, 50, 180, 380, ui->hSidebar, NULL, hInstance, NULL);
+  //   /// R
+  //   ui->filter_controls.hMonochrome =
+  //       CreateWindowEx(0, L"STATIC", NULL,
+  //                      WS_CHILD | WS_VISIBLE |
+  //                          SW_HIDE, // Add WS_VISIBLE only if showing by default
+  //                      10, 50, 180, 380, ui->hSidebar, NULL, hInstance, NULL);
 
-//   HWND hSliderMonochromeRed = CreateWindowEx(
-//       0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 35,
-//       160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
-//   HWND hLabel1 = CreateWindowEx(0, L"STATIC", L"Red:", WS_CHILD | WS_VISIBLE,
-//                                 10, 10, 80, 20, ui->filter_controls.hMonochrome,
-//                                 NULL, hInstance, NULL);
-//   // G
-//   HWND hSliderMonochromeGreen = CreateWindowEx(
-//       0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 95,
-//       160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+  //   HWND hSliderMonochromeRed = CreateWindowEx(
+  //       0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 35,
+  //       160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+  //   HWND hLabel1 = CreateWindowEx(0, L"STATIC", L"Red:", WS_CHILD | WS_VISIBLE,
+  //                                 10, 10, 80, 20, ui->filter_controls.hMonochrome,
+  //                                 NULL, hInstance, NULL);
+  //   // G
+  //   HWND hSliderMonochromeGreen = CreateWindowEx(
+  //       0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 95,
+  //       160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
 
-//   HWND hLabel2 = CreateWindowEx(0, L"STATIC", L"Green:", WS_CHILD | WS_VISIBLE,
-//                                 10, 70, 80, 20, ui->filter_controls.hMonochrome,
-//                                 NULL, hInstance, NULL);
-//   // B
-//   HWND hSliderMonochromeBlue = CreateWindowEx(
-//       0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 155,
-//       160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+  //   HWND hLabel2 = CreateWindowEx(0, L"STATIC", L"Green:", WS_CHILD | WS_VISIBLE,
+  //                                 10, 70, 80, 20, ui->filter_controls.hMonochrome,
+  //                                 NULL, hInstance, NULL);
+  //   // B
+  //   HWND hSliderMonochromeBlue = CreateWindowEx(
+  //       0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 155,
+  //       160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
 
-//   HWND hLabel3 = CreateWindowEx(
-//       0, L"STATIC", L"Blue:", WS_CHILD | WS_VISIBLE, 10, 135, 80, 20,
-//       ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+  //   HWND hLabel3 = CreateWindowEx(
+  //       0, L"STATIC", L"Blue:", WS_CHILD | WS_VISIBLE, 10, 135, 80, 20,
+  //       ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
 
-//   // Set slider range and position
-//   SendMessage(hSliderMonochromeRed, TBM_SETRANGE, TRUE, MAKELPARAM(-100, 100));
-//   SendMessage(hSliderMonochromeRed, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
-//   SendMessage(hSliderMonochromeGreen, TBM_SETRANGE, TRUE,
-//               MAKELPARAM(-100, 100));
-//   SendMessage(hSliderMonochromeGreen, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
-//   SendMessage(hSliderMonochromeBlue, TBM_SETRANGE, TRUE, MAKELPARAM(-100, 100));
-//   SendMessage(hSliderMonochromeBlue, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
-//   // ustaw czcionki labelom
-//   SendMessage(hLabel1, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
-//   SendMessage(hLabel2, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
-//   SendMessage(hLabel3, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
-// //MARK
+  //   // Set slider range and position
+  //   SendMessage(hSliderMonochromeRed, TBM_SETRANGE, TRUE, MAKELPARAM(-100, 100));
+  //   SendMessage(hSliderMonochromeRed, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
+  //   SendMessage(hSliderMonochromeGreen, TBM_SETRANGE, TRUE,
+  //               MAKELPARAM(-100, 100));
+  //   SendMessage(hSliderMonochromeGreen, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
+  //   SendMessage(hSliderMonochromeBlue, TBM_SETRANGE, TRUE, MAKELPARAM(-100, 100));
+  //   SendMessage(hSliderMonochromeBlue, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
+  //   // ustaw czcionki labelom
+  //   SendMessage(hLabel1, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
+  //   SendMessage(hLabel2, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
+  //   SendMessage(hLabel3, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
+  // //MARK
   /// SIDEBAR
   ///  TEST to należey dać do init_UI oraz przemyśleć tego miejsce w state.
   // hSidebar =
