@@ -12,6 +12,9 @@
 #include <commctrl.h>
 #include "Filters.h"
 #include "Image.h"
+
+#define FILTER_TYPES_COUNT 6
+
 /// Foreward declaration or something, nie można includwać window_precudure bo
 /// będzie include loop.
 LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
@@ -83,6 +86,8 @@ int show_save_dialog(HWND hwnd, char *out_path);
 int init_UI(HWND hwnd, UI *ui);
 // void show_filter_controls(HWND hwnd, Filter_type filter); // nw
 void enable_export(UI* ui);
+
+void switch_contols(const Filter_contorl_group_handles *handles, const HWND window_to_show);
 
 //-------------------------------------------------------------------------------
 

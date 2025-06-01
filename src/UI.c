@@ -204,6 +204,20 @@ void enable_export(UI *ui) {
   EnableMenuItem(ui->hExportMenu, 25, MF_ENABLED);
 }
 
+// ----------------------------------------------------------------
+
+/// this is SO illegal and unnecessary
+void switch_contols(const Filter_contorl_group_handles *handles,
+                    const HWND window_to_show) {
+
+  const HWND *p = &handles->hBlur;
+  for (int i = 0; i < FILTER_TYPES_COUNT; ++i)
+    ShowWindow(p[i], (p[i] != window_to_show) ? SW_HIDE : SW_SHOW);
+  //  (/¯◡ ‿ ◡) /¯
+}
+
+// ----------------------------------------------------------------
+
 // void show_filter_controls(HWND filter_control_handle, Filter_type filter) {
 //   switch (filter) {
 //   case BLUR:
@@ -216,7 +230,7 @@ void enable_export(UI *ui) {
 //     // ShowWindow(HWND hWnd, int nCmdShow)
 //     break;
 //   case AMPLIFY:
-//     ShowWindow(filter_control_handle, SW_SHOW);  
+//     ShowWindow(filter_control_handle, SW_SHOW);
 //     // ShowWindow(HWND hWnd, int nCmdShow)
 //     break;
 //   case NEGATIVE:

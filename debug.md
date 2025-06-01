@@ -50,6 +50,9 @@ UX:
 - [x]: in file picker complete filters for formats. (bad idea, no)
 - [ ]:
 - [ ]: 
+
+CHASE:
+- [ ]: exclusiviti paneli jest okropna do zrobienia kmiń...
 - [ ]: 
 - [ ]: 
 - [ ]: 
@@ -57,4 +60,5 @@ UX:
 - [ ]: 
 - [ ]: 
 - [ ]: 
-- [ ]: 
+
+
