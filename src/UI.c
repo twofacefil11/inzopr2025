@@ -207,7 +207,7 @@ void enable_export(UI *ui) {
 // ----------------------------------------------------------------
 
 /// this is SO illegal and unnecessary
-void switch_contols(const Filter_contorl_group_handles *handles,
+void switch_controls(const Filter_contorl_group_handles *handles,
                     const HWND window_to_show) {
 
   const HWND *p = &handles->hBlur;
