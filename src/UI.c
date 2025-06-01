@@ -87,10 +87,11 @@ int init_UI(HWND hwnd, UI *ui) {
 
   /// -----------MONO--------------------------------------------------
   /// R
-  ui->filter_controls.hMonochrome = CreateWindowEx(
-      0, L"STATIC", NULL,
-      WS_CHILD | WS_VISIBLE | SW_HIDE, // Add WS_VISIBLE only if showing by default
-      10, 50, 180, 380, ui->hSidebar, NULL, hInstance, NULL);
+  ui->filter_controls.hMonochrome =
+      CreateWindowEx(0, L"STATIC", NULL,
+                     WS_CHILD | WS_VISIBLE |
+                         SW_HIDE, // Add WS_VISIBLE only if showing by default
+                     10, 50, 180, 380, ui->hSidebar, NULL, hInstance, NULL);
 
   HWND hSliderMonochromeRed = CreateWindowEx(
       0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 35,
@@ -130,6 +131,51 @@ int init_UI(HWND hwnd, UI *ui) {
 
   /// -------------------------------------------------------------
 
+  //mark
+
+//   /// R
+//   ui->filter_controls.hMonochrome =
+//       CreateWindowEx(0, L"STATIC", NULL,
+//                      WS_CHILD | WS_VISIBLE |
+//                          SW_HIDE, // Add WS_VISIBLE only if showing by default
+//                      10, 50, 180, 380, ui->hSidebar, NULL, hInstance, NULL);
+
+//   HWND hSliderMonochromeRed = CreateWindowEx(
+//       0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 35,
+//       160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+//   HWND hLabel1 = CreateWindowEx(0, L"STATIC", L"Red:", WS_CHILD | WS_VISIBLE,
+//                                 10, 10, 80, 20, ui->filter_controls.hMonochrome,
+//                                 NULL, hInstance, NULL);
+//   // G
+//   HWND hSliderMonochromeGreen = CreateWindowEx(
+//       0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 95,
+//       160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+
+//   HWND hLabel2 = CreateWindowEx(0, L"STATIC", L"Green:", WS_CHILD | WS_VISIBLE,
+//                                 10, 70, 80, 20, ui->filter_controls.hMonochrome,
+//                                 NULL, hInstance, NULL);
+//   // B
+//   HWND hSliderMonochromeBlue = CreateWindowEx(
+//       0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 155,
+//       160, 30, ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+
+//   HWND hLabel3 = CreateWindowEx(
+//       0, L"STATIC", L"Blue:", WS_CHILD | WS_VISIBLE, 10, 135, 80, 20,
+//       ui->filter_controls.hMonochrome, NULL, hInstance, NULL);
+
+//   // Set slider range and position
+//   SendMessage(hSliderMonochromeRed, TBM_SETRANGE, TRUE, MAKELPARAM(-100, 100));
+//   SendMessage(hSliderMonochromeRed, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
+//   SendMessage(hSliderMonochromeGreen, TBM_SETRANGE, TRUE,
+//               MAKELPARAM(-100, 100));
+//   SendMessage(hSliderMonochromeGreen, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
+//   SendMessage(hSliderMonochromeBlue, TBM_SETRANGE, TRUE, MAKELPARAM(-100, 100));
+//   SendMessage(hSliderMonochromeBlue, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
+//   // ustaw czcionki labelom
+//   SendMessage(hLabel1, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
+//   SendMessage(hLabel2, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
+//   SendMessage(hLabel3, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
+// //MARK
   /// SIDEBAR
   ///  TEST to należey dać do init_UI oraz przemyśleć tego miejsce w state.
   // hSidebar =
@@ -155,11 +201,14 @@ int init_UI(HWND hwnd, UI *ui) {
   SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Amplify");
   SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Negative");
   SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Monochrome");
+  SendMessage(hComboBox, CB_ADDSTRING | SW_HIDE, 0, (LPARAM)L"");
   SendMessage(hComboBox, CB_SETCURSEL, 0, 0); // Select first item
+  //
+  SendMessage(hComboBox, CB_SETCURSEL, (WPARAM)-1, 0);
 
   SendMessage(hComboBox, WM_SETFONT, (WPARAM)ui->hFont, MAKELPARAM(TRUE, 0));
 
-  switch_controls(&ui->filter_controls, NULL); 
+  switch_controls(&ui->filter_controls, NULL);
 
   return 0;
 }
@@ -210,7 +259,7 @@ void enable_export(UI *ui) {
 
 /// this is SO illegal, evil and unnecessary
 void switch_controls(const Filter_contorl_group_handles *handles,
-                    const HWND *window_to_show) {
+                     const HWND *window_to_show) {
 
   const HWND *p = &handles->hBlur;
   for (int i = 0; i < FILTER_TYPES_COUNT; ++i)
