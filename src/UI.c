@@ -206,13 +206,13 @@ void enable_export(UI *ui) {
 
 // ----------------------------------------------------------------
 
-/// this is SO illegal and unnecessary
+/// this is SO illegal, evil and unnecessary
 void switch_controls(const Filter_contorl_group_handles *handles,
-                    const HWND window_to_show) {
+                    const HWND *window_to_show) {
 
   const HWND *p = &handles->hBlur;
   for (int i = 0; i < FILTER_TYPES_COUNT; ++i)
-    ShowWindow(p[i], (p[i] != window_to_show) ? SW_HIDE : SW_SHOW);
+    ShowWindow(p[i], (&p[i] != window_to_show) ? SW_HIDE : SW_SHOW);
   //  (/¯◡ ‿ ◡) /¯
 }
 

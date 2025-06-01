@@ -218,6 +218,8 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
   return 0;
 }
 
+// ----------------------------------------------------------------
+
 LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
                            UINT_PTR wp, DWORD_PTR lp) {
   State *app = (State *)lp;
@@ -261,28 +263,33 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
             switch (sel) {
               case 0:
                 // apply_blur(&app->current_image);
-                ShowWindow(app->UI_handles.filter_controls.hBlur, SW_SHOW);
+                switch_controls(&app->UI_handles.filter_controls,
+                                &app->UI_handles.filter_controls.hBlur);
                 break;
               case 1:
                 // apply_sharpen(&app->current_image);
-                ShowWindow(app->UI_handles.filter_controls.hSharpen, SW_SHOW);
+                switch_controls(&app->UI_handles.filter_controls,
+                                &app->UI_handles.filter_controls.hSharpen);
                 break;
               case 2:
                 apply_sepia(&app->current_image);
-                ShowWindow(app->UI_handles.filter_controls.hSepia, SW_SHOW);
+                switch_controls(&app->UI_handles.filter_controls,
+                                &app->UI_handles.filter_controls.hSepia);
                 break;
               case 3:
                 apply_amplify(&app->current_image, &app->filter_params);
-                ShowWindow(app->UI_handles.filter_controls.hAmplify, SW_SHOW);
+                switch_controls(&app->UI_handles.filter_controls,
+                                &app->UI_handles.filter_controls.hAmplify);
                 break;
               case 4:
                 apply_negative(&app->current_image);
-                ShowWindow(app->UI_handles.filter_controls.hNegative, SW_SHOW);
+                switch_controls(&app->UI_handles.filter_controls,
+                                &app->UI_handles.filter_controls.hNegative);
                 break;
               case 5:
                 apply_monochrome(&app->current_image, &app->filter_params);
-                ShowWindow(app->UI_handles.filter_controls.hMonochrome,
-                           SW_SHOW);
+                switch_controls(&app->UI_handles.filter_controls,
+                                &app->UI_handles.filter_controls.hMonochrome);
                 break;
             }
             InvalidateRect(app->UI_handles.hwnd_main, NULL,

@@ -87,7 +87,7 @@ int init_UI(HWND hwnd, UI *ui);
 // void show_filter_controls(HWND hwnd, Filter_type filter); // nw
 void enable_export(UI* ui);
 
-void switch_controls(const Filter_contorl_group_handles *handles, const HWND window_to_show);
+void switch_controls(const Filter_contorl_group_handles *handles, const HWND *window_to_show);
 
 //-------------------------------------------------------------------------------
 
