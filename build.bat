@@ -138,7 +138,7 @@ for %%f in (%BUILD_DIR%\*.obj) do (
 
 :: ==== MODIFY LINKING COMMAND TO INCLUDE THE RESOURCE FILE AND comctl32.lib ====
 
-cl /Fe:%BUILD_DIR%\out.exe %OBJ_FILES% %BUILD_DIR%\main.res user32.lib gdi32.lib comctl32.lib comdlg32.lib
+cl /Fe:%BUILD_DIR%\out.exe %OBJ_FILES% %BUILD_DIR%\main.res user32.lib gdi32.lib comctl32.lib comdlg32.lib shell32.lib
 if errorlevel 1 (
     echo Linking failed.
     exit /b 1

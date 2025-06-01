@@ -12,7 +12,9 @@
 
 #define UNICODE
 #define _UNICODE
+
 #define MAIN_WINDOW_CLASS_NAME L"Main_window"
+
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 

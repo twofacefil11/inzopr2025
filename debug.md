@@ -8,8 +8,8 @@ BUGS:
 - [x]: ODWRUCIĆ KOLORY NA EXPORTCIE; (albo coś sprytniejszego)
 - [ ]: przy exporcie przy wybraniu pliku dopisuje drugie rozszeżenie
 - [x]: glitches when stretchng lower than the image size;
-- [ ]: 
-- [ ]: 
+- [ ]: ask czy na pewno jak jest loaded image przy loadowaniu 
+- [ ]: albo save before load czy coś
 - [ ]: 
 - [ ]: 
 - [ ]: 
@@ -22,6 +22,15 @@ FILTERS:
 - [x]: Negative 
 - [ ]: BLUR
 - [ ]: sharpen
+- [ ]:
+- [ ]:
+- [ ]:
+- [ ]:
+
+ERROR HANDLING:
+- [ ]: Go look.
+- [ ]:
+- [ ]:
 - [ ]:
 - [ ]:
 - [ ]:
@@ -48,7 +57,7 @@ UX:
 - [ ]: export before closing?
 - [ ]: export before loading?
 - [x]: in file picker complete filters for formats. (bad idea, no)
-- [ ]:
+- [ ]: label nad dropdownem do wboru efektów
 - [ ]: 
 
 CHASE:

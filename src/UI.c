@@ -41,6 +41,9 @@ int init_UI(HWND hwnd, UI *ui) {
   /// dzięki temu ui wygląda nowocześniej
   INITCOMMONCONTROLSEX icex = {sizeof(icex), ICC_WIN95_CLASSES};
   InitCommonControlsEx(&icex);
+ 
+  // Drag and drop
+  DragAcceptFiles(hwnd, TRUE);
 
   ui->display_buffer =
       make_display_buffer(hwnd); // możliwe że zniknie wiele z tego TODO
@@ -216,7 +219,7 @@ int init_UI(HWND hwnd, UI *ui) {
   SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Amplify");
   SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Negative");
   SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Monochrome");
-  SendMessage(hComboBox, CB_ADDSTRING | SW_HIDE, 0, (LPARAM)L"");
+  SendMessage(hComboBox,  SW_HIDE, 0, (LPARAM)L"io");
   SendMessage(hComboBox, CB_SETCURSEL, 0, 0); // Select first item
   //
   SendMessage(hComboBox, CB_SETCURSEL, (WPARAM)-1, 0);

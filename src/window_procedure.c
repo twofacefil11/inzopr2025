@@ -55,6 +55,34 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
         PostQuitMessage(0);
       }
       break;
+
+    case WM_DROPFILES: {
+
+      RECT client_rect;
+      GetClientRect(hwnd, &client_rect);
+
+      HDROP hDrop = (HDROP)wParam;
+
+      char file_path[MAX_PATH];
+
+      if (DragQueryFileA(hDrop, 0, file_path, MAX_PATH)) {
+        // if (app->flags.IMAGE_LOADED) {
+        //   // TODO ASK CZY NA PEWNO
+        // }
+
+        load_image(&app->current_image, file_path);
+        load_image(&app->original_image, file_path);
+         
+        app->flags.IMAGE_LOADED = true;
+        enable_export(&app->UI_handles); // state mashine hmm może nie.
+        ShowWindow(app->UI_handles.hSidebar,
+                   SW_SHOW); // maybe out of here later if i made a checkerS
+        InvalidateRect(app->UI_handles.hwnd_main, &client_rect, TRUE);
+      }
+      DragFinish(hDrop);
+
+      break;
+    }
     // ----------------------------------------------------
     case WM_QUIT: {
       // TODO

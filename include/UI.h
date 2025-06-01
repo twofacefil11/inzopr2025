@@ -10,6 +10,9 @@
 #include <windows.h>
 #include <limits.h>
 #include <commctrl.h>
+#include <shellapi.h>
+
+
 #include "Filters.h"
 #include "Image.h"
 
