@@ -89,7 +89,7 @@ int init_UI(HWND hwnd, UI *ui) {
   /// R
   ui->filter_controls.hMonochrome = CreateWindowEx(
       0, L"STATIC", NULL,
-      WS_CHILD | WS_VISIBLE, // Add WS_VISIBLE only if showing by default
+      WS_CHILD | WS_VISIBLE | SW_HIDE, // Add WS_VISIBLE only if showing by default
       10, 50, 180, 380, ui->hSidebar, NULL, hInstance, NULL);
 
   HWND hSliderMonochromeRed = CreateWindowEx(
@@ -158,6 +158,8 @@ int init_UI(HWND hwnd, UI *ui) {
   SendMessage(hComboBox, CB_SETCURSEL, 0, 0); // Select first item
 
   SendMessage(hComboBox, WM_SETFONT, (WPARAM)ui->hFont, MAKELPARAM(TRUE, 0));
+
+  switch_controls(&ui->filter_controls, NULL); 
 
   return 0;
 }
