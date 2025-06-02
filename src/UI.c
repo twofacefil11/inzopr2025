@@ -77,7 +77,9 @@ int init_UI(HWND hwnd, UI *ui) {
   AppendMenu(hMenubar, MF_POPUP, (UINT_PTR)hInfo, L"Info");
 
   SetMenu(hwnd, hMenubar);
+  
   //-0------------------FONT-----------------------
+
   ui->hFont =
       CreateFont(16, 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
                  OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,
@@ -184,47 +186,41 @@ int init_UI(HWND hwnd, UI *ui) {
   }
 
   // Set slider range and position
-  SendMessage(hSliderAmplifyRed, TBM_SETRANGE, TRUE, MAKELPARAM(-100, 100));
+  SendMessage(hSliderAmplifyRed, TBM_SETRANGE, TRUE, MAKELPARAM(0, 50));
   SendMessage(hSliderAmplifyRed, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
-  SendMessage(hSliderAmplifyGreen, TBM_SETRANGE, TRUE, MAKELPARAM(-100, 100));
+  SendMessage(hSliderAmplifyGreen, TBM_SETRANGE, TRUE, MAKELPARAM(0, 50));
   SendMessage(hSliderAmplifyGreen, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
-  SendMessage(hSliderAmplifyBlue, TBM_SETRANGE, TRUE, MAKELPARAM(-100, 100));
+  SendMessage(hSliderAmplifyBlue, TBM_SETRANGE, TRUE, MAKELPARAM(0, 50));
   SendMessage(hSliderAmplifyBlue, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
 
-  /// -------------------------------------------------------------
   
-  //marARK
-  /// SIDEBAR
-  ///  TEST to należey dać do init_UI oraz przemyśleć tego miejsce w state.
-  // hSidebar =
-  //     CreateWindowEx(0,
-  //                    "STATIC", // Class name (built-in for static controls)
-  //                    NULL,     // No text
-  //                    WS_CHILD | WS_VISIBLE | SS_NOTIFY | SS_WHITEFRAME, 0, 0,
-  //                    200, 500,  // x, y, width, height
-  //                    hwnd,      // Parent window
-  //                    (HMENU)10, // ID
-  //                    ((LPCREATESTRUCT)lParam)->hInstance, NULL);
-
-  /// SIDEBAR WOULD Be  NICE HERE BUT IT CANT;
+  // id do identyfikacji
+  SetWindowLongPtr(hSliderAmplifyRed, GWLP_USERDATA, 6661);
+  SetWindowLongPtr(hSliderAmplifyGreen, GWLP_USERDATA, 6662);
+  SetWindowLongPtr(hSliderAmplifyBlue, GWLP_USERDATA, 6663);
+  SetWindowLongPtr(hSliderMonochromeRed, GWLP_USERDATA, 6664);
+  SetWindowLongPtr(hSliderMonochromeGreen, GWLP_USERDATA, 6665);
+  SetWindowLongPtr(hSliderMonochromeBlue, GWLP_USERDATA, 6666);
+   
+  /// -------------------------------------------------------------
 
   /// COMBOBOX
-  HWND hComboBox = CreateWindowExW(
+  ui->hComboBox = CreateWindowExW(
       0, L"COMBOBOX", NULL, WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST, 10, 10,
       160, 120, ui->hSidebar, (HMENU)100, hInstance, NULL);
 
-  SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Blur");
-  SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Sharpen");
-  SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Sepia");
-  SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Amplify");
-  SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Negative");
-  SendMessage(hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Monochrome");
-  SendMessage(hComboBox,  SW_HIDE, 0, (LPARAM)L"io");
-  SendMessage(hComboBox, CB_SETCURSEL, 0, 0); // Select first item
+  SendMessage(ui->hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Blur");
+  SendMessage(ui->hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Sharpen");
+  SendMessage(ui->hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Sepia");
+  SendMessage(ui->hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Amplify");
+  SendMessage(ui->hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Negative");
+  SendMessage(ui->hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Monochrome");
+  SendMessage(ui->hComboBox,  SW_HIDE, 0, (LPARAM)L"io");
+  SendMessage(ui->hComboBox, CB_SETCURSEL, 0, 0); // Select first item
   //
-  SendMessage(hComboBox, CB_SETCURSEL, (WPARAM)-1, 0);
+  SendMessage(ui->hComboBox, CB_SETCURSEL, (WPARAM)-1, 0);
 
-  SendMessage(hComboBox, WM_SETFONT, (WPARAM)ui->hFont, MAKELPARAM(TRUE, 0));
+  SendMessage(ui->hComboBox, WM_SETFONT, (WPARAM)ui->hFont, MAKELPARAM(TRUE, 0));
 
   switch_controls(&ui->filter_controls, NULL);
 

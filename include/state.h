@@ -26,7 +26,8 @@ typedef struct {
   UI UI_handles;
 
   Flags flags;
-
+  
+  
   Image original_image;
   Image current_image;
 

@@ -2,50 +2,58 @@
 
 // coś jak będziemy debugować testować i logować to pozamieniać na result
 // return type.
-void apply_monochrome(Image *image_data, Filter_params *filter_params) {
+void apply_monochrome(Image *original_image, Image *current_image, Filter_params *filter_params) {
 
-  for (int y = 0; y < image_data->height; y++) {
-    for (int x = 0; x < image_data->width; x++) {
-      int i = (y * image_data->width + x) * 4; // forcujemy 4 channele
+  for (int y = 0; y < original_image->height; y++) {
+    for (int x = 0; x < original_image->width; x++) {
+      int i = (y * original_image->width + x) * 4; // forcujemy 4 channele
 
       // rozszczepiamy
       uint8_t r, g, b;
-      r = image_data->pixels[i + 0];
-      g = image_data->pixels[i + 1];
-      b = image_data->pixels[i + 2];
+      r = original_image->pixels[i + 0];
+      g = original_image->pixels[i + 1];
+      b = original_image->pixels[i + 2];
 
-      int bw_value = (r + g + b) / 3;
+      int ir = r + filter_params->mono_r;
+      int ig = g + filter_params->mono_g;
+      int ib = b + filter_params->mono_b;
 
-      image_data->pixels[i + 0] = bw_value + filter_params->mono_b;
-      image_data->pixels[i + 1] = bw_value + filter_params->mono_g;
-      image_data->pixels[i + 2] = bw_value + filter_params->mono_r;
-      image_data->pixels[i + 3] = 255; // alpha i think
+      int bw_value = (ir + ig + ib) / 3;
+
+      // image_data->pixels[i + 0] = (uint8_t)(ib < 0 ? 0: ib > 255 ? 255 : ib);
+      // image_data->pixels[i + 1] = (uint8_t)(ig < 0 ? 0: ig > 255 ? 255 : ig);
+      // image_data->pixels[i + 2] =(uint8_t)(ir < 0 ? 0: ir > 255 ? 255 : ir);
+
+      current_image->pixels[i + 0] = (uint8_t)bw_value;
+      current_image->pixels[i + 1] = (uint8_t)bw_value;
+      current_image->pixels[i + 2] = (uint8_t)bw_value;
+      current_image->pixels[i + 3] = 255; // alpha i think
     }
   }
   // TODO
 }
 
-void apply_negative(Image *image_data) {
+void apply_negative(Image *original_image, Image *current_image) {
 
-  for (int y = 0; y < image_data->height; y++) {
-    for (int x = 0; x < image_data->width; x++) {
-      int i = (y * image_data->width + x) * 4; // forcujemy 4 channele
+  for (int y = 0; y < original_image->height; y++) {
+    for (int x = 0; x < original_image->width; x++) {
+      int i = (y * original_image->width + x) * 4; // forcujemy 4 channele
 
       // rozszczepiamy
       uint8_t r, g, b;
-      r = image_data->pixels[i + 0];
-      g = image_data->pixels[i + 1];
-      b = image_data->pixels[i + 2];
+      r = original_image->pixels[i + 0];
+      g = original_image->pixels[i + 1];
+      b = original_image->pixels[i + 2];
 
-      image_data->pixels[i + 0] = 255 - r;
-      image_data->pixels[i + 1] = 255 - g;
-      image_data->pixels[i + 2] = 255 - b;
-      image_data->pixels[i + 3] = 255; // alpha i think
+      current_image->pixels[i + 0] = 255 - r;
+      current_image->pixels[i + 1] = 255 - g;
+      current_image->pixels[i + 2] = 255 - b;
+      current_image->pixels[i + 3] = 255; // alpha i think
     }
   }
 }
 
-void apply_blur(Image *image_data, unsigned char *ref_pixels) {
+void apply_blur(Image *original_image, Image *current_image, unsigned char *ref_pixels) {
   // TODO:
   // blur powinien tez mieć zakres. gaussian chyba najłatwiejszy, itak nikogo
   // nie obhodzi
@@ -89,38 +97,38 @@ void apply_blur(Image *image_data, unsigned char *ref_pixels) {
   // }
 }
 
-void apply_amplify(Image *image_data, Filter_params *filter_params) {
-  for (int y = 0; y < image_data->height; y++) {
-    for (int x = 0; x < image_data->width; x++) {
-      int i = (y * image_data->width + x) * 4; // forcujemy 4 channele
+void apply_amplify(Image *original_image, Image *current_image, Filter_params *filter_params) {
+  for (int y = 0; y < original_image->height; y++) {
+    for (int x = 0; x < original_image->width; x++) {
+      int i = (y * original_image->width + x) * 4; // forcujemy 4 channele
 
       // rozszczepiamy
       uint8_t r, g, b;
-      r = image_data->pixels[i + 0];
-      g = image_data->pixels[i + 1];
-      b = image_data->pixels[i + 2];
-
-      image_data->pixels[i + 0] = r * filter_params->amplify_r;
-      image_data->pixels[i + 1] = g * filter_params->amplify_g;
-      image_data->pixels[i + 2] = b * filter_params->amplify_b;
-      image_data->pixels[i + 3] = 255; // alpha i think
+      r = original_image->pixels[i + 0];
+      g = original_image->pixels[i + 1];
+      b = original_image->pixels[i + 2];
+      current_image->pixels[i + 0] = r * filter_params->amplify_r;
+      current_image->pixels[i + 1] = g * filter_params->amplify_g;
+      current_image->pixels[i + 2] = b * filter_params->amplify_b;
+      current_image->pixels[i + 3] = 255; // alpha i think
+      // fprintf(stderr, "amplify: r = %d, after = %d\n", r, current_image->pixels[i + 0]);
     }
   }
 
   // TODO
 }
 
-void apply_sepia(Image *image_data) {
+void apply_sepia(Image *original_image, Image *current_image) {
   double weight_red, weight_green, weight_blue;
 
-  for (int x = 0; x < image_data->height * image_data->width; x++) {
+  for (int x = 0; x < original_image->height * original_image->width; x++) {
     int i = x * 4;
 
     uint8_t r, g, b;
-    r = image_data->pixels[i + 2];
-    g = image_data->pixels[i + 1];
-    b = image_data->pixels[i + 0];
-    
+    r = original_image->pixels[i + 2];
+    g = original_image->pixels[i + 1];
+    b = original_image->pixels[i + 0];
+
     weight_red = (r * 0.393) + (g * 0.769) + (b * 0.189);
     weight_green = (r * 0.349) + (g * 0.686) + (b * 0.168);
     weight_blue = (r * 0.272) + (g * 0.534) + (b * 0.131);
@@ -133,9 +141,17 @@ void apply_sepia(Image *image_data) {
     weight_green = (weight_green > 255) ? 255 : weight_green;
     weight_blue = (weight_blue > 255) ? 255 : weight_blue;
 
-    image_data->pixels[i + 2] = (uint8_t)weight_red;
-    image_data->pixels[i + 1] = (uint8_t)weight_green;
-    image_data->pixels[i + 0] = (uint8_t)weight_blue;
-    image_data->pixels[i + 3] = 255; // alpha i think
+    current_image->pixels[i + 2] = (uint8_t)weight_red;
+    current_image->pixels[i + 1] = (uint8_t)weight_green;
+    current_image->pixels[i + 0] = (uint8_t)weight_blue;
+    current_image->pixels[i + 3] = 255; // alpha i think
   }
 }
+
+// ------------------------------------------------------------------------
+
+void reapply_effects(Image *original_image, Image *current_image, Filter_type type) {
+  
+}
+
+

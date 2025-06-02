@@ -16,6 +16,10 @@ int free_image(Image *image) {
 
 // ---------------------------------------------------------------------
 
+   
+
+// ---------------------------------------------------------------------
+
 int load_image(Image *image, char *path) {
 
   if (image->pixels)
@@ -26,10 +30,13 @@ int load_image(Image *image, char *path) {
 
   // zamiaa rgba na bgra czy jakoś tak
   for (int i = 0; i < image->width * image->height; ++i) {
+
     unsigned char *px = &image->pixels[i * 4];
     unsigned char tmp = px[0];
+
     px[0] = px[2];
     px[2] = tmp;
+
   }
   return 1;
 }

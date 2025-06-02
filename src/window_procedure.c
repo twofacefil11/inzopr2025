@@ -32,6 +32,10 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
 
       init_UI(hwnd, &app->UI_handles);
 
+      SetWindowSubclass(app->UI_handles.filter_controls.hMonochrome, PanelProc,
+                        1, (DWORD_PTR)app);
+      SetWindowSubclass(app->UI_handles.filter_controls.hAmplify, PanelProc, 1,
+                        (DWORD_PTR)app);
       /// init side panel może do funkcji
 
       break;
@@ -70,9 +74,9 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
         //   // TODO ASK CZY NA PEWNO
         // }
 
-        load_image(&app->current_image, file_path);
+        load_image(&app->current_image, file_path); // DEBUG
         load_image(&app->original_image, file_path);
-         
+
         app->flags.IMAGE_LOADED = true;
         enable_export(&app->UI_handles); // state mashine hmm może nie.
         ShowWindow(app->UI_handles.hSidebar,
@@ -117,9 +121,8 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
             if (load_image(&app->current_image, app->current_image_path)) {
               app->flags.IMAGE_LOADED = true;
               enable_export(&app->UI_handles); // state mashine hmm może nie.
-              ShowWindow(
-                  app->UI_handles.hSidebar,
-                  SW_SHOW); // maybe out of here later if i made a checker
+              ShowWindow(app->UI_handles.hSidebar, SW_SHOW);
+              // maybe out of here later if i made a checker
               load_image(&app->original_image, app->current_image_path);
               InvalidateRect(hwnd, &client_rect, TRUE);
             }
@@ -204,6 +207,8 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
       PAINTSTRUCT ps;
       HDC hdc = BeginPaint(hwnd, &ps);
 
+      fprintf(stderr, "paint");
+
       Image *img = &app->current_image; // For preview
       if (app->flags.PREVIEW_ORIGINAL)
         img = &app->original_image;
@@ -236,13 +241,19 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
           img->width, img->height, 0, 0, 0, img->height, img->pixels,
           &app->UI_handles.display_buffer.frame_bitmap_info, DIB_RGB_COLORS);
 
+      EndPaint(hwnd, &ps);
     } break;
     // ----------------------------------------------------
     default: {
       return DefWindowProc(hwnd, message, wParam, lParam);
     }
+    case WM_USER + 123: {
+      InvalidateRect(hwnd, NULL, TRUE);
+      return 0;
+    }
       // ----------------------------------------------------
   }
+
   return 0;
 }
 
@@ -251,13 +262,17 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
 LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
                            UINT_PTR wp, DWORD_PTR lp) {
   State *app = (State *)lp;
+
+  HWND wm = GetParent(hwnd);
+
   switch (msg) {
-    // case WM_CREATE: {
-    //   CREATESTRUCT *cs = (CREATESTRUCT *)lParam;
-    //   app = (State *)cs->lpCreateParams;
-    //   SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)app);
-    //   return 0;
-    // }
+
+    case WM_CREATE: {
+      CREATESTRUCT *cs = (CREATESTRUCT *)lParam;
+      app = (State *)cs->lpCreateParams;
+      SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)app);
+      return 0;
+    }
     case WM_PAINT: {
       PAINTSTRUCT ps;
       HDC hdc = BeginPaint(hwnd, &ps);
@@ -272,12 +287,62 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
       EndPaint(hwnd, &ps);
       return 0;
     }
+    case WM_HSCROLL: {
+
+      HWND hSlider = (HWND)lParam;
+
+      if ((HWND)lParam != NULL) {
+        // if (TB_ENDTRACK == LOWORD(wParam)) { // NO
+
+        int pos = (int)SendMessage(hSlider, TBM_GETPOS, 0, 0);
+        LONG_PTR id = GetWindowLongPtr(hSlider, GWLP_USERDATA);
+
+        switch (id) {
+          case 6661:
+            app->filter_params.amplify_r = pos;
+            apply_amplify(&app->original_image, &app->current_image,
+                          &app->filter_params);
+            break;
+          case 6662:
+            app->filter_params.amplify_g = pos;
+            apply_amplify(&app->original_image, &app->current_image,
+                          &app->filter_params);
+            break;
+          case 6663:
+            app->filter_params.amplify_b = pos;
+            apply_amplify(&app->original_image, &app->current_image,
+                          &app->filter_params);
+            break;
+          case 6664:
+            app->filter_params.mono_r = pos;
+            apply_negative(&app->original_image, &app->current_image);
+            break;
+          case 6665:
+            app->filter_params.mono_g = pos;
+            apply_negative(&app->original_image, &app->current_image);
+            break;
+          case 6666:
+            app->filter_params.mono_b = pos;
+            apply_negative(&app->original_image, &app->current_image);
+            break;
+        }
+
+        InvalidateRect(app->UI_handles.hwnd_main, NULL, FALSE);
+      }
+      // InvalidateRect(((UI*)lp)->hwnd_main, NULL      }
+      // fprintf(stderr, "before invalidate\n");
+      // InvalidateRect(app->UI_handles.hwnd_main, NULL, FALSE);
+      // UpdateWindow(app->UI_handles.hwnd_main);
+      // PostMessage(((UI *)lp)->hwnd_main, WM_COMMAND,
+      //             MAKEWPARAM(100, CBN_SELCHANGE), (LPARAM)app);
+    } break;
     case WM_NCDESTROY:
       RemoveWindowSubclass(hwnd, PanelProc, wp);
       break;
       // In side panel WndProc:
 
     case WM_COMMAND: {
+
       // -------------------EFFECTS-DROPDOWN--------------------
 
       switch (LOWORD(wParam)) {
@@ -289,43 +354,54 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
             // React to selection
             /// SHOW FILTER CONTROLS INSTNIEJHE NIE WIME  CZY POWINNO
             switch (sel) {
+
               case 0:
                 // apply_blur(&app->current_image);
                 switch_controls(&app->UI_handles.filter_controls,
                                 &app->UI_handles.filter_controls.hBlur);
                 break;
+
               case 1:
                 // apply_sharpen(&app->current_image);
                 switch_controls(&app->UI_handles.filter_controls,
                                 &app->UI_handles.filter_controls.hSharpen);
                 break;
+
               case 2:
-                apply_sepia(&app->current_image);
+                apply_sepia(&app->original_image, &app->current_image);
                 switch_controls(&app->UI_handles.filter_controls,
                                 &app->UI_handles.filter_controls.hSepia);
                 break;
+
               case 3:
-                apply_amplify(&app->current_image, &app->filter_params);
+                apply_amplify(&app->original_image, &app->current_image,
+                              &app->filter_params);
                 switch_controls(&app->UI_handles.filter_controls,
                                 &app->UI_handles.filter_controls.hAmplify);
                 break;
+
               case 4:
-                apply_negative(&app->current_image);
+                apply_negative(&app->original_image, &app->current_image);
                 switch_controls(&app->UI_handles.filter_controls,
                                 &app->UI_handles.filter_controls.hNegative);
                 break;
+
               case 5:
-                apply_monochrome(&app->current_image, &app->filter_params);
+                apply_monochrome(&app->original_image, &app->current_image,
+                                 &app->filter_params);
                 switch_controls(&app->UI_handles.filter_controls,
                                 &app->UI_handles.filter_controls.hMonochrome);
                 break;
             }
-            InvalidateRect(app->UI_handles.hwnd_main, NULL,
-                           TRUE); // force redraw
+
+            // if (app->UI_handles.hwnd_main == NULL)
+            //   fprintf(stderr, "\ndupa\n");
+            InvalidateRect(app->UI_handles.hwnd_main, NULL, TRUE);
           }
           break;
         }
-        // case rn SendMessage(GetParent(hwnd), msg, wParam, lParam);
+
+        // SendMessage(GetParent(hwnd), msg, wParam, lParam);
         default:
           app = (State *)GetWindowLongPtr(hwnd, GWLP_USERDATA);
           break;

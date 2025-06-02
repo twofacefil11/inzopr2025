@@ -38,11 +38,13 @@ typedef struct {
 
 // } Filter;
 // TODO
-// void apply_blur(Image *image_data, unsigned char *ref_pixels);
-void apply_sharpen(Image *image_data, Filter_params *filter_params);
-void apply_monochrome(Image *image_data, Filter_params *filter_params);
-void apply_negative(Image *image_data);
-void apply_amplify(Image *image_data, Filter_params *filter_params); // todo
-void apply_sepia(Image *image_data);
+// void apply_blur(Image *original_image, Image *current_image, unsigned char *ref_pixels);
+void apply_sharpen(Image *original_image, Image *current_image,Filter_params *filter_params);
+void apply_monochrome(Image *original_image, Image *current_image, Filter_params *filter_params);
+void apply_negative(Image *original_image, Image *current_image);
+void apply_amplify(Image *original_image, Image *current_image, Filter_params *filter_params); // todo
+void apply_sepia(Image *original_image, Image *current_image);
+
+void reapply_effects(Image *original_image, Image *current_image, Filter_type type);
 
 #endif // FILTERS_H

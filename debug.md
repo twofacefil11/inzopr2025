@@ -1,3 +1,15 @@
+TOP:
+- [ ]: POPRAWIĆ WSZYSTKIE EFEKTY ŻEBY CZYTAŁY I ZAPISYWAŁY NACO TRZEBA
+- [ ]: 1
+- [ ]: 2
+- [ ]: 3
+- [ ]: 4
+- [ ]: 5
+- [ ]: 6
+- [ ]: POPRAWIĆ CALEL TYCH FUNKCJI
+
+
+
 BUGS:
 - [x]: hide combobox on startup
 - [x]: block export options and back when useless.
@@ -10,8 +22,8 @@ BUGS:
 - [x]: glitches when stretchng lower than the image size;
 - [ ]: ask czy na pewno jak jest loaded image przy loadowaniu 
 - [ ]: albo save before load czy coś
-- [ ]: 
-- [ ]: 
+- [ ]: MAGIC VALUES, mainly ids
+- [ ]: p sure it doesnt clamp the bw filter correctly 
 - [ ]: 
 - [ ]: 
 
@@ -58,6 +70,12 @@ UX:
 - [ ]: export before loading?
 - [x]: in file picker complete filters for formats. (bad idea, no)
 - [ ]: label nad dropdownem do wboru efektów
+- [ ]: hint the user to drag and drop somwehow
+- [ ]: 
+- [ ]: 
+- [ ]: 
+- [ ]: 
+- [ ]: 
 - [ ]: 
 
 CHASE:
