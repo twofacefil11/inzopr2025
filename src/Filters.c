@@ -53,52 +53,132 @@ void apply_negative(Image *original_image, Image *current_image) {
     }
   }
 }
+// mark
 
 void apply_blur(Image *original_image, Image *current_image,
                 Filter_params *filter_params) {
 
-  // matrix wag do bluru typu gausian
+  int width = original_image->width;
+  int height = original_image->height;
+  int n = width * height;
+  uint8_t *mid_image = malloc((size_t)n * 4);
+
+  // Manual copy from original_image->pixels to mid_image
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+      int i = (y * width + x) * 4;
+      mid_image[i + 0] = original_image->pixels[i + 0];
+      mid_image[i + 1] = original_image->pixels[i + 1];
+      mid_image[i + 2] = original_image->pixels[i + 2];
+      mid_image[i + 3] = original_image->pixels[i + 3]; // alpha if present
+    }
+  }
+
   float kernel_weights[9] = {1 / 16.0f, 2 / 16.0f, 1 / 16.0f,
                              2 / 16.0f, 4 / 16.0f, 2 / 16.0f,
                              1 / 16.0f, 2 / 16.0f, 1 / 16.0f};
-  // matrix indexów w kernelu 3x3
-  int kernel_indexes[9] = {-4 - (4 * original_image->width),
-                           0 - (4 * original_image->width),
-                           4 - (4 * original_image->width),
-                           -4,
-                           0,
-                           4,
-                           -4 - (4 * original_image->width),
-                           0 - (4 * original_image->width),
-                           4 - (4 * original_image->width)};
-  // NOTE: jeżeli chcemy zwiększać moc rozmycia, trzeba zaimplementować dynamiczny kernel size i obliczanie indexów i wag
-  // NIEPARZYSTY!! rozmiar kernela podawać w filter_params jakby co, dodam do stae, nie wiem czy użyjemy
 
-  for (int y = 0; y < original_image->height; y++) {
-    for (int x = 0; x < original_image->width; x++) {
-      int i = (y * original_image->width + x) * 4;
+  int kernel_indexes[9] = {
+      -4 - (4 * width), 0 - (4 * width), 4 - (4 * width), -4, 0, 4,
+      -4 + (4 * width), 0 + (4 * width), 4 + (4 * width)};
 
-      // member to clamp it later
-      //dla pixela na który patrzymy zliczamy średnią z ważonych przez kernel pixeli wokoło i ustawiamy to co wyjdzie dla r g i b;
-      if (y == 0 || y == original_image->height - 1 || x == 0 || x == original_image->width - 1) continue;
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+      int i = (y * width + x) * 4;
+      for (int t = 0; t < filter_params->blur_times; t++) {
 
-      uint8_t r = 0, g = 0, b = 0;
-      
-      for (int k = 0; k < 10; k++) {
-        b += original_image->pixels[i + kernel_indexes[k]] * kernel_weights[k];
-        g += original_image->pixels[i + 1 + kernel_indexes[k]] *
-             kernel_weights[k];
-        r += original_image->pixels[i + 2 + kernel_indexes[k]] *
-             kernel_weights[k];
+        if (y == 0 || y == height - 1 || x == 0 || x == width - 1)
+          continue;
+
+        uint8_t r = 0, g = 0, b = 0;
+
+        for (int k = 0; k < 9; k++) {
+          b +=
+              mid_image[i + kernel_indexes[k]] * kernel_weights[k];
+          g += mid_image[i + 1 + kernel_indexes[k]] *
+               kernel_weights[k];
+          r += mid_image[i + 2 + kernel_indexes[k]] *
+               kernel_weights[k];
+        }
+
+        mid_image[i + 0] = b;
+        mid_image[i + 1] = g;
+        mid_image[i + 2] = r;
       }
-
-      current_image->pixels[i + 0] = b;
-      current_image->pixels[i + 1] = g;
-      current_image->pixels[i + 2] = r;
-
     }
   }
+
+  // Manual copy from mid_image back to current_image->pixels
+  for (int y = 0; y < height; y++) {
+    for (int x = 0; x < width; x++) {
+      int i = (y * width + x) * 4;
+      current_image->pixels[i + 0] = mid_image[i + 0];
+      current_image->pixels[i + 1] = mid_image[i + 1];
+      current_image->pixels[i + 2] = mid_image[i + 2];
+      current_image->pixels[i + 3] = mid_image[i + 3];
+    }
+  }
+
+  free(mid_image);
 }
+// mark
+// void apply_blur(Image *original_image, Image *current_image,
+//                 Filter_params *filter_params) {
+
+//   int n = original_image->width * original_image->height;
+//   uint8_t *mid_image = malloc((size_t)n);
+
+//   mempcpy(mid_image, original_image->pixels, n);
+
+//   // matrix wag do bluru typu gausian
+//   float kernel_weights[9] = {1 / 16.0f, 2 / 16.0f, 1 / 16.0f,
+//                              2 / 16.0f, 4 / 16.0f, 2 / 16.0f,
+//                              1 / 16.0f, 2 / 16.0f, 1 / 16.0f};
+//   // matrix indexów w kernelu 3x3
+//   int kernel_indexes[9] = {-4 - (4 * original_image->width),
+//                            0 - (4 * original_image->width),
+//                            4 - (4 * original_image->width),
+//                            -4,
+//                            0,
+//                            4,
+//                            -4 - (4 * original_image->width),
+//                            0 - (4 * original_image->width),
+//                            4 - (4 * original_image->width)};
+//   // NOTE: jeżeli chcemy zwiększać moc rozmycia, trzeba zaimplementować dynamiczny kernel size i obliczanie indexów i wag
+//   // NIEPARZYSTY!! rozmiar kernela podawać w filter_params jakby co, dodam do stae, nie wiem czy użyjemy
+
+//   for (int y = 0; y < original_image->height; y++) {
+//     for (int x = 0; x < original_image->width; x++) {
+//       int i = (y * original_image->width + x) * 4;
+//       for (int t = 0; t < filter_params->blur_times; t++) {
+
+//         // member to clamp it later
+//         //dla pixela na który patrzymy zliczamy średnią z ważonych przez kernel pixeli wokoło i ustawiamy to co wyjdzie dla r g i b;
+//         if (y == 0 || y == original_image->height - 1 || x == 0 ||
+//             x == original_image->width - 1)
+//           continue;
+
+//         uint8_t r = 0, g = 0, b = 0;
+
+//         for (int k = 0; k < 10; k++) {
+//           b +=
+//               original_image->pixels[i + kernel_indexes[k]] * kernel_weights[k];
+//           g += original_image->pixels[i + 1 + kernel_indexes[k]] *
+//                kernel_weights[k];
+//           r += original_image->pixels[i + 2 + kernel_indexes[k]] *
+//                kernel_weights[k];
+//         }
+
+//         mid_image[i + 0] = b;
+//         mid_image[i + 1] = g;
+//         mid_image[i + 2] = r;
+//       }
+//     }
+//   }
+//
+//   mempcpy(current_image->pixels, mid_image, n);
+//   free(mid_image);
+// }
 void apply_amplify(Image *original_image, Image *current_image,
                    Filter_params *filter_params, bool CLAMP_AMPLIFY) {
 

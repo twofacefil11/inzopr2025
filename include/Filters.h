@@ -28,7 +28,7 @@ typedef struct {
   double mono_g;
   double mono_b;
 
-
+  int blur_times;
 } Filter_params;
 
 //-------------------------------------------------------------------------------
