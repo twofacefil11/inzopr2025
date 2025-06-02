@@ -369,7 +369,7 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
             switch (sel) {
 
               case 0:
-                // apply_blur(&app->current_image);
+                apply_blur(&app->original_image, &app->current_image, &app->filter_params);
                 switch_controls(&app->UI_handles.filter_controls,
                                 &app->UI_handles.filter_controls.hBlur);
                 break;

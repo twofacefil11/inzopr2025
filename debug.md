@@ -35,7 +35,7 @@ FILTERS:
 - [ ]: BLUR
 - [ ]: sharpen
 - [ ]:
-- [ ]:
+- [ ]: amplify range is not tuned at all buck probably frickit
 - [ ]:
 - [ ]:
 

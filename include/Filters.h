@@ -40,7 +40,7 @@ typedef struct {
 
 // } Filter;
 // TODO
-// void apply_blur(Image *original_image, Image *current_image, unsigned char *ref_pixels);
+void apply_blur(Image *original_image, Image *current_image, Filter_params *filter_params);
 void apply_sharpen(Image *original_image, Image *current_image,Filter_params *filter_params);
 void apply_monochrome(Image *original_image, Image *current_image, Filter_params *filter_params);
 void apply_negative(Image *original_image, Image *current_image);

@@ -55,50 +55,50 @@ void apply_negative(Image *original_image, Image *current_image) {
 }
 
 void apply_blur(Image *original_image, Image *current_image,
-                unsigned char *ref_pixels) {
-  // TODO:
-  // blur powinien tez mieć zakres. gaussian chyba najłatwiejszy, itak nikogo
-  // nie obhodzi
-  // for (int y = 0; y < image_data->height; y++) {
-  //   for (int x = 0; x < image_data->width; x++) {
-  //     int i = (y * image_data->width + x) * 4;
+                Filter_params *filter_params) {
 
-  //     // matrix na obliczanie bluru typu gausian
-  //     float kernel[3][3] = {{1 / 16.0f, 2 / 16.0f, 1 / 16.0f},
-  //                           {2 / 16.0f, 4 / 16.0f, 2 / 16.0f},
-  //                           {1 / 16.0f, 2 / 16.0f, 1 / 16.0f}};
+  // matrix wag do bluru typu gausian
+  float kernel_weights[9] = {1 / 16.0f, 2 / 16.0f, 1 / 16.0f,
+                             2 / 16.0f, 4 / 16.0f, 2 / 16.0f,
+                             1 / 16.0f, 2 / 16.0f, 1 / 16.0f};
+  // matrix indexów w kernelu 3x3
+  int kernel_indexes[9] = {-4 - (4 * original_image->width),
+                           0 - (4 * original_image->width),
+                           4 - (4 * original_image->width),
+                           -4,
+                           0,
+                           4,
+                           -4 - (4 * original_image->width),
+                           0 - (4 * original_image->width),
+                           4 - (4 * original_image->width)};
+  // NOTE: jeżeli chcemy zwiększać moc rozmycia, trzeba zaimplementować dynamiczny kernel size i obliczanie indexów i wag
+  // NIEPARZYSTY!! rozmiar kernela podawać w filter_params jakby co, dodam do stae, nie wiem czy użyjemy
 
-  //     uint8_t r, g, b;
-  //     for (int t = 0; t < 10; t++) {
+  for (int y = 0; y < original_image->height; y++) {
+    for (int x = 0; x < original_image->width; x++) {
+      int i = (y * original_image->width + x) * 4;
 
-  //       for (int ky = -1; ky <= 1; ++ky) {
-  //         for (int kx = -1; kx <= 1; ++kx) {
+      // member to clamp it later
+      //dla pixela na który patrzymy zliczamy średnią z ważonych przez kernel pixeli wokoło i ustawiamy to co wyjdzie dla r g i b;
+      if (y == 0 || y == original_image->height - 1 || x == 0 || x == original_image->width - 1) continue;
 
-  //           int sampleX = x + kx;
-  //           int sampleY = y + ky;
-  //           int sampleIndex = (sampleY * image_data->width + sampleX) * 4;
+      uint8_t r = 0, g = 0, b = 0;
+      
+      for (int k = 0; k < 10; k++) {
+        b += original_image->pixels[i + kernel_indexes[k]] * kernel_weights[k];
+        g += original_image->pixels[i + 1 + kernel_indexes[k]] *
+             kernel_weights[k];
+        r += original_image->pixels[i + 2 + kernel_indexes[k]] *
+             kernel_weights[k];
+      }
 
-  //           float weight = kernel[ky + 1][kx + 1];
-  //           r = ref_pixels[sampleIndex + 0] * weight;
-  //           g = ref_pixels[sampleIndex + 1] * weight;
-  //           b = ref_pixels[sampleIndex + 2] * weight;
-  //         }
-  //       }
-  //     }
+      current_image->pixels[i + 0] = b;
+      current_image->pixels[i + 1] = g;
+      current_image->pixels[i + 2] = r;
 
-  //     // rozszczepiamy
-  //     r = image_data->pixels[i + 0];
-  //     g = image_data->pixels[i + 1];
-  //     b = image_data->pixels[i + 2];
-
-  //     // image_data->pixels[i + 0] = r * coef;
-  //     // image_data->pixels[i + 1] = g * coef;
-  //     // image_data->pixels[i + 2] = b * coef;
-  //     // image_data->pixels[i + 3] = 255;// alpha i think
-  //   }
-  // }
+    }
+  }
 }
-
 void apply_amplify(Image *original_image, Image *current_image,
                    Filter_params *filter_params, bool CLAMP_AMPLIFY) {
 
