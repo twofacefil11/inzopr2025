@@ -4,6 +4,7 @@
 #define FILTERS_H
 
 #include "Image.h"
+#include <stdbool.h>
 
 typedef enum {
   BLUR,
@@ -21,6 +22,7 @@ typedef struct {
   double amplify_r;
   double amplify_g;
   double amplify_b;
+  bool clamp_amplify;
 
   double mono_r; // -255 -255
   double mono_g;
@@ -42,7 +44,7 @@ typedef struct {
 void apply_sharpen(Image *original_image, Image *current_image,Filter_params *filter_params);
 void apply_monochrome(Image *original_image, Image *current_image, Filter_params *filter_params);
 void apply_negative(Image *original_image, Image *current_image);
-void apply_amplify(Image *original_image, Image *current_image, Filter_params *filter_params); // todo
+void apply_amplify(Image *original_image, Image *current_image, Filter_params *filter_params, bool CLAMP_AMPLIFY);
 void apply_sepia(Image *original_image, Image *current_image);
 
 void reapply_effects(Image *original_image, Image *current_image, Filter_type type);

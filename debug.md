@@ -24,7 +24,7 @@ BUGS:
 - [ ]: albo save before load czy coś
 - [ ]: MAGIC VALUES, mainly ids
 - [ ]: p sure it doesnt clamp the bw filter correctly 
-- [ ]: 
+- [ ]: conditional redrawing of the background bcs it flickers on hscroll
 - [ ]: 
 
 FILTERS:

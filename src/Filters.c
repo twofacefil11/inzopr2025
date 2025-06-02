@@ -2,7 +2,8 @@
 
 // coś jak będziemy debugować testować i logować to pozamieniać na result
 // return type.
-void apply_monochrome(Image *original_image, Image *current_image, Filter_params *filter_params) {
+void apply_monochrome(Image *original_image, Image *current_image,
+                      Filter_params *filter_params) {
 
   for (int y = 0; y < original_image->height; y++) {
     for (int x = 0; x < original_image->width; x++) {
@@ -53,7 +54,8 @@ void apply_negative(Image *original_image, Image *current_image) {
   }
 }
 
-void apply_blur(Image *original_image, Image *current_image, unsigned char *ref_pixels) {
+void apply_blur(Image *original_image, Image *current_image,
+                unsigned char *ref_pixels) {
   // TODO:
   // blur powinien tez mieć zakres. gaussian chyba najłatwiejszy, itak nikogo
   // nie obhodzi
@@ -97,25 +99,42 @@ void apply_blur(Image *original_image, Image *current_image, unsigned char *ref_
   // }
 }
 
-void apply_amplify(Image *original_image, Image *current_image, Filter_params *filter_params) {
+void apply_amplify(Image *original_image, Image *current_image,
+                   Filter_params *filter_params, bool CLAMP_AMPLIFY) {
+
   for (int y = 0; y < original_image->height; y++) {
     for (int x = 0; x < original_image->width; x++) {
       int i = (y * original_image->width + x) * 4; // forcujemy 4 channele
 
       // rozszczepiamy
       uint8_t r, g, b;
-      r = original_image->pixels[i + 0];
+      b = original_image->pixels[i + 0];
       g = original_image->pixels[i + 1];
-      b = original_image->pixels[i + 2];
-      current_image->pixels[i + 0] = r * filter_params->amplify_r;
-      current_image->pixels[i + 1] = g * filter_params->amplify_g;
-      current_image->pixels[i + 2] = b * filter_params->amplify_b;
-      current_image->pixels[i + 3] = 255; // alpha i think
-      // fprintf(stderr, "amplify: r = %d, after = %d\n", r, current_image->pixels[i + 0]);
+      r = original_image->pixels[i + 2];
+
+      if (CLAMP_AMPLIFY) {
+        int ib = b * filter_params->amplify_b;
+        int ig = g * filter_params->amplify_g;
+        int ir = r * filter_params->amplify_r;
+
+        current_image->pixels[i + 0] = (uint8_t)(ib < 0     ? 0
+                                                 : ib > 255 ? 255
+                                                            : ib);
+        current_image->pixels[i + 1] = (uint8_t)(ig < 0     ? 0
+                                                 : ig > 255 ? 255
+                                                            : ig);
+        current_image->pixels[i + 2] = (uint8_t)(ir < 0     ? 0
+                                                 : ir > 255 ? 255
+                                                            : ir);
+        continue;
+      }
+
+      current_image->pixels[i + 0] = (b * filter_params->amplify_b);
+      current_image->pixels[i + 1] = (g * filter_params->amplify_g);
+      current_image->pixels[i + 2] = (r * filter_params->amplify_r);
+      current_image->pixels[i + 3] = 255;
     }
   }
-
-  // TODO
 }
 
 void apply_sepia(Image *original_image, Image *current_image) {
@@ -150,8 +169,5 @@ void apply_sepia(Image *original_image, Image *current_image) {
 
 // ------------------------------------------------------------------------
 
-void reapply_effects(Image *original_image, Image *current_image, Filter_type type) {
-  
-}
-
-
+void reapply_effects(Image *original_image, Image *current_image,
+                     Filter_type type) {}

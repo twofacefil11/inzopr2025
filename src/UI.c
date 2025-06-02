@@ -41,7 +41,7 @@ int init_UI(HWND hwnd, UI *ui) {
   /// dzięki temu ui wygląda nowocześniej
   INITCOMMONCONTROLSEX icex = {sizeof(icex), ICC_WIN95_CLASSES};
   InitCommonControlsEx(&icex);
- 
+
   // Drag and drop
   DragAcceptFiles(hwnd, TRUE);
 
@@ -77,7 +77,7 @@ int init_UI(HWND hwnd, UI *ui) {
   AppendMenu(hMenubar, MF_POPUP, (UINT_PTR)hInfo, L"Info");
 
   SetMenu(hwnd, hMenubar);
-  
+
   //-0------------------FONT-----------------------
 
   ui->hFont =
@@ -179,21 +179,34 @@ int init_UI(HWND hwnd, UI *ui) {
         0, TRACKBAR_CLASS, NULL, WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS, 10, 155,
         160, 30, ui->filter_controls.hAmplify, NULL, hInstance, NULL);
 
+    HWND hCheckbox =
+        CreateWindowEx(0, 
+                       L"BUTTON",
+                       L"Clamp",
+                       WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX, 10,
+                       190, 150, 20,
+                       ui->filter_controls.hAmplify,
+                       (HMENU)6667,
+                       hInstance,
+                       NULL);   
+
+    CheckDlgButton(ui->filter_controls.hAmplify, 6667, BST_CHECKED);
+
     // ustaw czcionki labelom
     SendMessage(hLabel1, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
     SendMessage(hLabel2, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
     SendMessage(hLabel3, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
+    SendMessage(hCheckbox, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
   }
 
   // Set slider range and position
-  SendMessage(hSliderAmplifyRed, TBM_SETRANGE, TRUE, MAKELPARAM(0, 50));
+  SendMessage(hSliderAmplifyRed, TBM_SETRANGE, TRUE, MAKELPARAM(1, 20));
   SendMessage(hSliderAmplifyRed, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
-  SendMessage(hSliderAmplifyGreen, TBM_SETRANGE, TRUE, MAKELPARAM(0, 50));
+  SendMessage(hSliderAmplifyGreen, TBM_SETRANGE, TRUE, MAKELPARAM(1, 20));
   SendMessage(hSliderAmplifyGreen, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
-  SendMessage(hSliderAmplifyBlue, TBM_SETRANGE, TRUE, MAKELPARAM(0, 50));
+  SendMessage(hSliderAmplifyBlue, TBM_SETRANGE, TRUE, MAKELPARAM(1, 20));
   SendMessage(hSliderAmplifyBlue, TBM_SETPOS, (WPARAM)TRUE, (LPARAM)0);
 
-  
   // id do identyfikacji
   SetWindowLongPtr(hSliderAmplifyRed, GWLP_USERDATA, 6661);
   SetWindowLongPtr(hSliderAmplifyGreen, GWLP_USERDATA, 6662);
@@ -201,7 +214,7 @@ int init_UI(HWND hwnd, UI *ui) {
   SetWindowLongPtr(hSliderMonochromeRed, GWLP_USERDATA, 6664);
   SetWindowLongPtr(hSliderMonochromeGreen, GWLP_USERDATA, 6665);
   SetWindowLongPtr(hSliderMonochromeBlue, GWLP_USERDATA, 6666);
-   
+
   /// -------------------------------------------------------------
 
   /// COMBOBOX
@@ -215,12 +228,13 @@ int init_UI(HWND hwnd, UI *ui) {
   SendMessage(ui->hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Amplify");
   SendMessage(ui->hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Negative");
   SendMessage(ui->hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Monochrome");
-  SendMessage(ui->hComboBox,  SW_HIDE, 0, (LPARAM)L"io");
+  SendMessage(ui->hComboBox, SW_HIDE, 0, (LPARAM)L"io");
   SendMessage(ui->hComboBox, CB_SETCURSEL, 0, 0); // Select first item
   //
   SendMessage(ui->hComboBox, CB_SETCURSEL, (WPARAM)-1, 0);
 
-  SendMessage(ui->hComboBox, WM_SETFONT, (WPARAM)ui->hFont, MAKELPARAM(TRUE, 0));
+  SendMessage(ui->hComboBox, WM_SETFONT, (WPARAM)ui->hFont,
+              MAKELPARAM(TRUE, 0));
 
   switch_controls(&ui->filter_controls, NULL);
 

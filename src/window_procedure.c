@@ -207,7 +207,7 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
       PAINTSTRUCT ps;
       HDC hdc = BeginPaint(hwnd, &ps);
 
-      fprintf(stderr, "paint");
+      // fprintf(stderr, "paint");
 
       Image *img = &app->current_image; // For preview
       if (app->flags.PREVIEW_ORIGINAL)
@@ -234,7 +234,7 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
       app->UI_handles.display_buffer.frame_bitmap_info.bmiHeader.biCompression =
           BI_RGB;
 
-      FillRect(hdc, &client_rect, (HBRUSH)(COLOR_WINDOW + 1));
+      // FillRect(hdc, &client_rect, (HBRUSH)(COLOR_WINDOW + 1));
 
       SetDIBitsToDevice(
           hdc, 0, 0, //
@@ -301,17 +301,20 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
           case 6661:
             app->filter_params.amplify_r = pos;
             apply_amplify(&app->original_image, &app->current_image,
-                          &app->filter_params);
+                          &app->filter_params,
+                          app->filter_params.clamp_amplify);
             break;
           case 6662:
             app->filter_params.amplify_g = pos;
             apply_amplify(&app->original_image, &app->current_image,
-                          &app->filter_params);
+                          &app->filter_params,
+                          app->filter_params.clamp_amplify);
             break;
           case 6663:
             app->filter_params.amplify_b = pos;
             apply_amplify(&app->original_image, &app->current_image,
-                          &app->filter_params);
+                          &app->filter_params,
+                          app->filter_params.clamp_amplify);
             break;
           case 6664:
             app->filter_params.mono_r = pos;
@@ -346,6 +349,16 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
       // -------------------EFFECTS-DROPDOWN--------------------
 
       switch (LOWORD(wParam)) {
+        case 6667:
+
+
+          app->filter_params.clamp_amplify = IsDlgButtonChecked(hwnd, 6667);
+          
+          apply_amplify(&app->original_image, &app->current_image,
+                        &app->filter_params, app->filter_params.clamp_amplify);
+
+          InvalidateRect(app->UI_handles.hwnd_main, NULL, TRUE);
+          break;
         case 100: {
           if (HIWORD(wParam) == CBN_SELCHANGE) {
             HWND hComboBox = (HWND)lParam;
@@ -375,7 +388,8 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
 
               case 3:
                 apply_amplify(&app->original_image, &app->current_image,
-                              &app->filter_params);
+                              &app->filter_params,
+                              app->filter_params.clamp_amplify);
                 switch_controls(&app->UI_handles.filter_controls,
                                 &app->UI_handles.filter_controls.hAmplify);
                 break;
@@ -393,10 +407,10 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
                                 &app->UI_handles.filter_controls.hMonochrome);
                 break;
             }
+            InvalidateRect(app->UI_handles.hwnd_main, NULL, TRUE);
 
             // if (app->UI_handles.hwnd_main == NULL)
             //   fprintf(stderr, "\ndupa\n");
-            InvalidateRect(app->UI_handles.hwnd_main, NULL, TRUE);
           }
           break;
         }
