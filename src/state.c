@@ -21,6 +21,7 @@ State *init_state(HINSTANCE hInstance) { /// TODO
   app_state->filter_params.clamp_amplify = 1;
 
   app_state->filter_params.blur_times = 1;
+  app_state->zoom = 1;
 
   return app_state; // change that
 }

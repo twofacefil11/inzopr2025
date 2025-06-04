@@ -196,7 +196,7 @@ int init_UI(HWND hwnd, UI *ui) {
     CheckDlgButton(ui->filter_controls.hAmplify, 6667, BST_CHECKED);
 
     HWND hCheckbox_og =
-        CreateWindowExW(0, 
+        CreateWindowEx(0, 
                        L"BUTTON",
                        L"Original",
                        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX, 10,

@@ -38,6 +38,8 @@ typedef struct {
   Filter_type current_filter_type;
   Filter_params filter_params;
 
+  float zoom;
+
 } State;
 
 //-------------------------------------------------------------------------------

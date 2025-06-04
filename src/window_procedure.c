@@ -79,8 +79,8 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
 
         app->flags.IMAGE_LOADED = true;
         enable_export(&app->UI_handles); // state mashine hmm może nie.
-        ShowWindow(app->UI_handles.hSidebar,
-                   SW_SHOW); // maybe out of here later if i made a checkerS
+        ShowWindow(app->UI_handles.hSidebar, SW_SHOW);
+        // maybe out of here later if i made a checkerS
         InvalidateRect(app->UI_handles.hwnd_main, &client_rect, TRUE);
       }
       DragFinish(hDrop);
@@ -90,6 +90,21 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
     // ----------------------------------------------------
     case WM_QUIT: {
       // TODO
+      break;
+    }
+
+      // ----------------------------------------------------
+
+    case WM_MOUSEWHEEL: {
+      int delta = GET_WHEEL_DELTA_WPARAM(wParam); // +120 or -120 per przedział
+      short zDelta = (short)HIWORD(wParam);       // same here
+      if (delta > 0) {
+        app->zoom *= 1.01f; // zoom in ?
+      } else {
+        app->zoom /= 1.01f; // zoom out ?
+      }
+
+      InvalidateRect(hwnd, NULL, TRUE); // trigger repaint
       break;
     }
     // ----------------------------------------------------
@@ -234,13 +249,31 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
       app->UI_handles.display_buffer.frame_bitmap_info.bmiHeader.biCompression =
           BI_RGB;
 
-      // FillRect(hdc, &client_rect, (HBRUSH)(COLOR_WINDOW + 1));
+      FillRect(hdc, &client_rect, (HBRUSH)(COLOR_WINDOW + 1));
 
-      SetDIBitsToDevice(
-          hdc, 0, 0, //
-          img->width, img->height, 0, 0, 0, img->height, img->pixels,
-          &app->UI_handles.display_buffer.frame_bitmap_info, DIB_RGB_COLORS);
+      // SetDIBitsToDevice(
+      //     hdc, 0, 0, //
+      //     img->width, img->height, 0, 0, 0, img->height, img->pixels,
+      //     &app->UI_handles.display_buffer.frame_bitmap_info, DIB_RGB_COLORS);
 
+      int scaled_width = (int)(img->width * app->zoom);
+      int scaled_height = (int)(img->height * app->zoom);
+
+      int target_x = (client_rect.right - scaled_width) / 2;
+      int target_y = (client_rect.bottom - scaled_height) / 2;
+
+      SetStretchBltMode(hdc, HALFTONE); // Use high-quality scaling
+      SetBrushOrgEx(hdc, 0, 0, NULL);   // Required for HALFTONE
+
+      StretchDIBits(
+          hdc, 
+          target_x, target_y,           // Destination X, Y on screen
+          scaled_width, scaled_height,
+          0, 0, img->width, img->height,           // Source width & height
+          img->pixels, &app->UI_handles.display_buffer.frame_bitmap_info,
+          DIB_RGB_COLORS,
+          SRCCOPY // Raster operation
+      );
       EndPaint(hwnd, &ps);
     } break;
     // ----------------------------------------------------
