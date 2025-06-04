@@ -9,7 +9,7 @@ DisplayBuffer make_display_buffer(HWND hwnd) {
 
   RECT client_rect;
   GetClientRect(hwnd, &client_rect);
-
+  
   DisplayBuffer db = {0};
 
   // helpers below, might concat
@@ -35,6 +35,9 @@ Window_initial_position getWindowInfo() {
 
 /// This might have to be here since it might know what stasate is
 int init_UI(HWND hwnd, UI *ui) {
+
+  RECT rc;
+  GetClientRect(hwnd, &rc);
 
   /// niezbędne
   HINSTANCE hInstance = GetModuleHandle(NULL);
@@ -192,12 +195,25 @@ int init_UI(HWND hwnd, UI *ui) {
 
     CheckDlgButton(ui->filter_controls.hAmplify, 6667, BST_CHECKED);
 
+    HWND hCheckbox_og =
+        CreateWindowExW(0, 
+                       L"BUTTON",
+                       L"Original",
+                       WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX, 10,
+                       370, 150, 20,
+                       ui->hSidebar,
+                       (HMENU)6668,
+                       hInstance,
+                       NULL);   
+    // CheckDlgButton(ui->filter_controls.hAmplify, 6667, BST_CHECKED);
     // ustaw czcionki labelom
     SendMessage(hLabel1, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
     SendMessage(hLabel2, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
     SendMessage(hLabel3, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
     SendMessage(hCheckbox, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
+    SendMessage(hCheckbox_og, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
   }
+
 
   // Set slider range and position
   SendMessage(hSliderAmplifyRed, TBM_SETRANGE, TRUE, MAKELPARAM(1, 20));

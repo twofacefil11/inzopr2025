@@ -350,15 +350,19 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
 
       switch (LOWORD(wParam)) {
         case 6667:
-
-
           app->filter_params.clamp_amplify = IsDlgButtonChecked(hwnd, 6667);
-          
+
           apply_amplify(&app->original_image, &app->current_image,
                         &app->filter_params, app->filter_params.clamp_amplify);
 
           InvalidateRect(app->UI_handles.hwnd_main, NULL, TRUE);
           break;
+
+        case 6668:
+          app->flags.PREVIEW_ORIGINAL = IsDlgButtonChecked(hwnd, 6668);
+          InvalidateRect(app->UI_handles.hwnd_main, NULL, TRUE);
+          break;
+
         case 100: {
           if (HIWORD(wParam) == CBN_SELCHANGE) {
             HWND hComboBox = (HWND)lParam;
@@ -369,7 +373,8 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
             switch (sel) {
 
               case 0:
-                apply_blur(&app->original_image, &app->current_image, &app->filter_params);
+                apply_blur(&app->original_image, &app->current_image,
+                           &app->filter_params);
                 switch_controls(&app->UI_handles.filter_controls,
                                 &app->UI_handles.filter_controls.hBlur);
                 break;
