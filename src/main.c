@@ -36,7 +36,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
   Window_initial_position wip = getWindowInfo();
   appState->UI_handles.hwnd_main = CreateWindowW(
       MAIN_WINDOW_CLASS_NAME, (LPCWSTR)("Xest wyswietlania obrazu"),
-      WS_OVERLAPPEDWINDOW | WS_VISIBLE, wip.x, wip.y, wip.width, wip.height,
+      WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_CLIPCHILDREN, wip.x, wip.y, wip.width, wip.height,
       NULL, NULL, hInstance, appState);
 
   if (!appState->UI_handles.hwnd_main) {
