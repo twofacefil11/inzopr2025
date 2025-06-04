@@ -227,6 +227,7 @@ int init_UI(HWND hwnd, UI *ui) {
   SetWindowLongPtr(hSliderAmplifyRed, GWLP_USERDATA, 6661);
   SetWindowLongPtr(hSliderAmplifyGreen, GWLP_USERDATA, 6662);
   SetWindowLongPtr(hSliderAmplifyBlue, GWLP_USERDATA, 6663);
+
   SetWindowLongPtr(hSliderMonochromeRed, GWLP_USERDATA, 6664);
   SetWindowLongPtr(hSliderMonochromeGreen, GWLP_USERDATA, 6665);
   SetWindowLongPtr(hSliderMonochromeBlue, GWLP_USERDATA, 6666);

@@ -249,12 +249,14 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
       app->UI_handles.display_buffer.frame_bitmap_info.bmiHeader.biCompression =
           BI_RGB;
 
-      FillRect(hdc, &client_rect, (HBRUSH)(COLOR_WINDOW + 1));
-
-      // SetDIBitsToDevice(
-      //     hdc, 0, 0, //
-      //     img->width, img->height, 0, 0, 0, img->height, img->pixels,
-      //     &app->UI_handles.display_buffer.frame_bitmap_info, DIB_RGB_COLORS);
+      HDC backDC = CreateCompatibleDC(hdc); // ← offscreen memory DC
+      HBITMAP backBmp = CreateCompatibleBitmap(
+          hdc, client_rect.right, client_rect.bottom); // ← offscreen bitmap
+      HBITMAP oldBmp = SelectObject(backDC, backBmp);  // ← attach bitmap to DC
+                                                       //
+      // --- CLEAR BACKBUFFER ---
+      HBRUSH black = (HBRUSH)GetStockObject(BLACK_BRUSH);
+      FillRect(backDC, &client_rect, black);
 
       int scaled_width = (int)(img->width * app->zoom);
       int scaled_height = (int)(img->height * app->zoom);
@@ -262,18 +264,36 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
       int target_x = (client_rect.right - scaled_width) / 2;
       int target_y = (client_rect.bottom - scaled_height) / 2;
 
-      SetStretchBltMode(hdc, HALFTONE); // Use high-quality scaling
-      SetBrushOrgEx(hdc, 0, 0, NULL);   // Required for HALFTONE
+      SetStretchBltMode(backDC, HALFTONE);
+      SetBrushOrgEx(backDC, 0, 0, NULL); //
+      // te dwa dsą potrzebne do ładniejszego samplowania przyzoomie
+      
+      /// STARY stretch, bez doublebuffering
+      // StretchDIBits(hdc, target_x, target_y, // Destination X, Y on screen
+      //               scaled_width, scaled_height, 0, 0, img->width,
+      //               img->height, // Source width & height
+      //               img->pixels,
+      //               &app->UI_handles.display_buffer.frame_bitmap_info,
+      //               DIB_RGB_COLORS,
+      //               SRCCOPY // Raster operation
+      // );
 
-      StretchDIBits(
-          hdc, 
-          target_x, target_y,           // Destination X, Y on screen
-          scaled_width, scaled_height,
-          0, 0, img->width, img->height,           // Source width & height
-          img->pixels, &app->UI_handles.display_buffer.frame_bitmap_info,
-          DIB_RGB_COLORS,
-          SRCCOPY // Raster operation
-      );
+      StretchDIBits(backDC,       
+                    target_x, target_y,
+                    scaled_width, scaled_height,
+                    0, 0,                       
+                    img->width, img->height,   
+                    img->pixels,
+                    &app->UI_handles.display_buffer.frame_bitmap_info,
+                    DIB_RGB_COLORS, SRCCOPY);
+
+      BitBlt(hdc, 0, 0, client_rect.right, client_rect.bottom, backDC, 0, 0,
+             SRCCOPY);
+
+      SelectObject(backDC, oldBmp);
+      DeleteObject(backBmp);
+      DeleteDC(backDC);
+
       EndPaint(hwnd, &ps);
     } break;
     // ----------------------------------------------------
@@ -349,17 +369,22 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
                           &app->filter_params,
                           app->filter_params.clamp_amplify);
             break;
+
+            // MONOCHROMES
           case 6664:
             app->filter_params.mono_r = pos;
-            apply_negative(&app->original_image, &app->current_image);
+            apply_monochrome(&app->original_image, &app->current_image,
+                             &app->filter_params);
             break;
           case 6665:
             app->filter_params.mono_g = pos;
-            apply_negative(&app->original_image, &app->current_image);
+            apply_monochrome(&app->original_image, &app->current_image,
+                             &app->filter_params);
             break;
           case 6666:
             app->filter_params.mono_b = pos;
-            apply_negative(&app->original_image, &app->current_image);
+            apply_monochrome(&app->original_image, &app->current_image,
+                             &app->filter_params);
             break;
         }
 

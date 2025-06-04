@@ -20,15 +20,11 @@ void apply_monochrome(Image *original_image, Image *current_image,
       int ib = b + filter_params->mono_b;
 
       int bw_value = (ir + ig + ib) / 3;
-
-      // image_data->pixels[i + 0] = (uint8_t)(ib < 0 ? 0: ib > 255 ? 255 : ib);
-      // image_data->pixels[i + 1] = (uint8_t)(ig < 0 ? 0: ig > 255 ? 255 : ig);
-      // image_data->pixels[i + 2] =(uint8_t)(ir < 0 ? 0: ir > 255 ? 255 : ir);
-
-      current_image->pixels[i + 0] = (uint8_t)bw_value;
-      current_image->pixels[i + 1] = (uint8_t)bw_value;
+      bw_value = bw_value < 0 ? 0 : bw_value > 255 ? 255 : bw_value;
+      current_image->pixels[i + 0] = bw_value;
+      current_image->pixels[i + 1] = bw_value;
+      current_image->pixels[i + 2] = bw_value;
       current_image->pixels[i + 2] = (uint8_t)bw_value;
-      current_image->pixels[i + 3] = 255; // alpha i think
     }
   }
   // TODO
@@ -93,12 +89,9 @@ void apply_blur(Image *original_image, Image *current_image,
         uint8_t r = 0, g = 0, b = 0;
 
         for (int k = 0; k < 9; k++) {
-          b +=
-              mid_image[i + kernel_indexes[k]] * kernel_weights[k];
-          g += mid_image[i + 1 + kernel_indexes[k]] *
-               kernel_weights[k];
-          r += mid_image[i + 2 + kernel_indexes[k]] *
-               kernel_weights[k];
+          b += mid_image[i + kernel_indexes[k]] * kernel_weights[k];
+          g += mid_image[i + 1 + kernel_indexes[k]] * kernel_weights[k];
+          r += mid_image[i + 2 + kernel_indexes[k]] * kernel_weights[k];
         }
 
         mid_image[i + 0] = b;
