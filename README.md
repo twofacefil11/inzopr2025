@@ -1,6 +1,9 @@
+
 # inzopr2025
 
 Niewielka alikacja do nakładania efektów oraz eksportu obrazów. Projekt realizowany w ramach przedmiotu Inżynieria Oprogramowania.
+
+![Preview](preview.gif)
 
 ## Getting started
 

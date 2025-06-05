@@ -32,6 +32,7 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
 
       init_UI(hwnd, &app->UI_handles);
 
+
       SetWindowSubclass(app->UI_handles.filter_controls.hMonochrome, PanelProc,
                         1, (DWORD_PTR)app);
       SetWindowSubclass(app->UI_handles.filter_controls.hAmplify, PanelProc, 1,

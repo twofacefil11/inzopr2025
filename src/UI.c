@@ -44,6 +44,7 @@ int init_UI(HWND hwnd, UI *ui) {
   /// dzięki temu ui wygląda nowocześniej
   INITCOMMONCONTROLSEX icex = {sizeof(icex), ICC_WIN95_CLASSES};
   InitCommonControlsEx(&icex);
+  
 
   // Drag and drop
   DragAcceptFiles(hwnd, TRUE);
@@ -286,6 +287,8 @@ int init_UI(HWND hwnd, UI *ui) {
 
   SendMessage(ui->hComboBox, WM_SETFONT, (WPARAM)ui->hFont,
               MAKELPARAM(TRUE, 0));
+
+  SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)ui->hIcon);
 
   switch_controls(&ui->filter_controls, NULL);
 

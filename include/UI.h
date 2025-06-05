@@ -63,6 +63,7 @@ typedef struct {
   HMENU hExportMenu;
   HFONT hFont;
   HBRUSH hComboBgBrush;
+  HICON hIcon;
   Filter_contorl_group_handles filter_controls;
 
 } UI;

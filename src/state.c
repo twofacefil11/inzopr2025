@@ -40,6 +40,8 @@ void register_class(State *state, HINSTANCE hInstance,
   window_class.hCursor = LoadCursor(NULL, IDC_ARROW);
   window_class.hInstance = hInstance;
   window_class.lpszClassName = window_class_name;
+  window_class.hIcon = state->UI_handles.hIcon;
+  
   RegisterClassW(&window_class);
 }
 

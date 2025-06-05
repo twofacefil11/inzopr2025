@@ -31,11 +31,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
   if (!appState)
     return -1; // ERR
 
+  //icon
+  appState->UI_handles.hIcon = (HICON)LoadImage(NULL, L"FilterLAB.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE | LR_SHARED);
+
   register_class(appState, hInstance, MAIN_WINDOW_CLASS_NAME);
 
   Window_initial_position wip = getWindowInfo();
+
   appState->UI_handles.hwnd_main = CreateWindowW(
-      MAIN_WINDOW_CLASS_NAME, (LPCWSTR)("Xest wyswietlania obrazu"),
+      MAIN_WINDOW_CLASS_NAME, (LPCWSTR)("FilterLAB"),
       WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_CLIPCHILDREN, wip.x, wip.y, wip.width, wip.height,
       NULL, NULL, hInstance, appState);
 
