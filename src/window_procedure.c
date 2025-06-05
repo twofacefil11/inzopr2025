@@ -36,6 +36,8 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
                         1, (DWORD_PTR)app);
       SetWindowSubclass(app->UI_handles.filter_controls.hAmplify, PanelProc, 1,
                         (DWORD_PTR)app);
+      SetWindowSubclass(app->UI_handles.filter_controls.hSharpen, PanelProc, 1,
+                        (DWORD_PTR)app);
       /// init side panel może do funkcji
 
       break;
@@ -267,7 +269,7 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
       SetStretchBltMode(backDC, HALFTONE);
       SetBrushOrgEx(backDC, 0, 0, NULL); //
       // te dwa dsą potrzebne do ładniejszego samplowania przyzoomie
-      
+
       /// STARY stretch, bez doublebuffering
       // StretchDIBits(hdc, target_x, target_y, // Destination X, Y on screen
       //               scaled_width, scaled_height, 0, 0, img->width,
@@ -278,12 +280,8 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
       //               SRCCOPY // Raster operation
       // );
 
-      StretchDIBits(backDC,       
-                    target_x, target_y,
-                    scaled_width, scaled_height,
-                    0, 0,                       
-                    img->width, img->height,   
-                    img->pixels,
+      StretchDIBits(backDC, target_x, target_y, scaled_width, scaled_height, 0,
+                    0, img->width, img->height, img->pixels,
                     &app->UI_handles.display_buffer.frame_bitmap_info,
                     DIB_RGB_COLORS, SRCCOPY);
 
@@ -354,20 +352,18 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
           case 6661:
             app->filter_params.amplify_r = pos;
             apply_amplify(&app->original_image, &app->current_image,
-                          &app->filter_params,
-                          app->filter_params.clamp_amplify);
+                          &app->filter_params);
             break;
           case 6662:
             app->filter_params.amplify_g = pos;
             apply_amplify(&app->original_image, &app->current_image,
-                          &app->filter_params,
-                          app->filter_params.clamp_amplify);
+                          &app->filter_params);
+
             break;
           case 6663:
             app->filter_params.amplify_b = pos;
             apply_amplify(&app->original_image, &app->current_image,
-                          &app->filter_params,
-                          app->filter_params.clamp_amplify);
+                          &app->filter_params);
             break;
 
             // MONOCHROMES
@@ -385,6 +381,11 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
             app->filter_params.mono_b = pos;
             apply_monochrome(&app->original_image, &app->current_image,
                              &app->filter_params);
+            break;
+          case 6611:
+            app->filter_params.sharpen_mix_const = pos;
+            apply_sharpen(&app->original_image, &app->current_image,
+                          &app->filter_params);
             break;
         }
 
@@ -411,14 +412,42 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
           app->filter_params.clamp_amplify = IsDlgButtonChecked(hwnd, 6667);
 
           apply_amplify(&app->original_image, &app->current_image,
-                        &app->filter_params, app->filter_params.clamp_amplify);
-
+                        &app->filter_params);
           InvalidateRect(app->UI_handles.hwnd_main, NULL, TRUE);
+
           break;
 
         case 6668:
           app->flags.PREVIEW_ORIGINAL = IsDlgButtonChecked(hwnd, 6668);
           InvalidateRect(app->UI_handles.hwnd_main, NULL, TRUE);
+          break;
+
+        case 6673:
+          app->filter_params.sharpen_show_edges =
+              IsDlgButtonChecked(hwnd, 6673);
+          apply_sharpen(&app->original_image, &app->current_image,
+                        &app->filter_params);
+          InvalidateRect(app->UI_handles.hwnd_main, NULL, TRUE);
+          break;
+
+        case 6671:
+          if (IsDlgButtonChecked(hwnd, 6671)) {
+            app->filter_params.sharpen_sobel = 1;
+            app->filter_params.sharpen_prewitt = 0;
+            apply_sharpen(&app->original_image, &app->current_image,
+                          &app->filter_params);
+            InvalidateRect(app->UI_handles.hwnd_main, NULL, TRUE);
+          }
+          break;
+
+        case 6672:
+          if (IsDlgButtonChecked(hwnd, 6672)) {
+            app->filter_params.sharpen_sobel = 0;
+            app->filter_params.sharpen_prewitt = 1;
+            apply_sharpen(&app->original_image, &app->current_image,
+                          &app->filter_params);
+            InvalidateRect(app->UI_handles.hwnd_main, NULL, TRUE);
+          }
           break;
 
         case 100: {
@@ -438,7 +467,8 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
                 break;
 
               case 1:
-                // apply_sharpen(&app->current_image);
+                apply_sharpen(&app->original_image, &app->current_image,
+                              &app->filter_params);
                 switch_controls(&app->UI_handles.filter_controls,
                                 &app->UI_handles.filter_controls.hSharpen);
                 break;
@@ -451,8 +481,7 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
 
               case 3:
                 apply_amplify(&app->original_image, &app->current_image,
-                              &app->filter_params,
-                              app->filter_params.clamp_amplify);
+                              &app->filter_params);
                 switch_controls(&app->UI_handles.filter_controls,
                                 &app->UI_handles.filter_controls.hAmplify);
                 break;
@@ -475,6 +504,8 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
             // if (app->UI_handles.hwnd_main == NULL)
             //   fprintf(stderr, "\ndupa\n");
           }
+
+          InvalidateRect(app->UI_handles.hwnd_main, NULL, TRUE);
           break;
         }
 

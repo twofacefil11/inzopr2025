@@ -25,6 +25,7 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
 
 LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
                            UINT_PTR wp, DWORD_PTR lp);
+
 //-------------------------------------------------------------------------------
 
 typedef struct {
@@ -35,8 +36,6 @@ typedef struct {
   HBITMAP frame_bitmap;
   HDC device_context;
 } DisplayBuffer;
-
-// //-------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------
 

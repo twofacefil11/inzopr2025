@@ -23,11 +23,12 @@ FILTERS:
 - [x]: Sepia
 - [x]: amplify
 - [x]: Negative 
-- [ ]: BLUR
-- [ ]: sharpen
+- [x]: BLUR
+- [ ]: BLUR HAS ONLY 3x3 KERNEL
+- [x]: sharpen
 - [ ]:
-- [ ]: amplify range is not tuned at all buck probably frickit
-- [ ]:
+- [ ]: amplify range is not tuned at all
+- [ ]: 
 - [ ]:
 
 ERROR HANDLING:
@@ -60,7 +61,7 @@ UX:
 - [x]: in file picker complete filters for formats. (bad idea, no)
 - [ ]: label nad dropdownem do wboru efektów
 - [ ]: hint the user to drag and drop somwehow
-- [ ]: 
+- [ ]: adjust sidepanel dims to the contents
 - [ ]: 
 - [ ]: 
 - [ ]: 

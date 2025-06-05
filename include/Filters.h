@@ -5,7 +5,7 @@
 
 #include "Image.h"
 #include <stdbool.h>
-
+#include <math.h>
 typedef enum {
   BLUR,
   SHARPEN,
@@ -29,12 +29,18 @@ typedef struct {
   double mono_b;
 
   int blur_times;
+
+  bool sharpen_sobel;
+  bool sharpen_prewitt;
+  bool sharpen_show_edges;
+  int sharpen_mix_const;
+
 } Filter_params;
 
 //-------------------------------------------------------------------------------
 
 /// TODO: trzeba pożądnie przemyśleć jak reprezentowac dany filtr i jego opcje.
-/// Podejrzewam, że przy drzewie zachowań bedzie trzebe "zhardocować" część.
+/// Podejrzewam, że przy drzewie zachowań bedzie trzebe "zhardkować" część.
 // typedef struct {
 //   Filter_type filter_type;
 
@@ -44,9 +50,10 @@ void apply_blur(Image *original_image, Image *current_image, Filter_params *filt
 void apply_sharpen(Image *original_image, Image *current_image,Filter_params *filter_params);
 void apply_monochrome(Image *original_image, Image *current_image, Filter_params *filter_params);
 void apply_negative(Image *original_image, Image *current_image);
-void apply_amplify(Image *original_image, Image *current_image, Filter_params *filter_params, bool CLAMP_AMPLIFY);
+void apply_amplify(Image *original_image, Image *current_image, Filter_params *filter_params);
 void apply_sepia(Image *original_image, Image *current_image);
 
 void reapply_effects(Image *original_image, Image *current_image, Filter_type type);
+static inline uint8_t clamp_int(int value);
 
 #endif // FILTERS_H
