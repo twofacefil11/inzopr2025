@@ -9,7 +9,6 @@
 #include <windows.h>
 
 #include "Filters.h"
-#include "resource.h"
 #include "Image.h"
 #include "UI.h"
 

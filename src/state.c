@@ -1,5 +1,4 @@
 #include "state.h"
-#include <windows.h>
 
 // --------------------------------------------------------------
 
@@ -9,7 +8,7 @@ State *init_state(HINSTANCE hInstance) { /// TODO
   if (!app_state)
     return NULL;
 
-  app_state->hic = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APP_ICON));
+  // app_state->hic = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APP_ICON));
   app_state->current_filter_type = NO_FILTER;
   app_state->hInstance = hInstance;
 
@@ -42,7 +41,6 @@ void register_class(State *state, HINSTANCE hInstance,
   window_class.hCursor = LoadCursor(NULL, IDC_ARROW);
   window_class.hInstance = hInstance;
   window_class.lpszClassName = window_class_name;
-  window_class.hIcon = NULL; 
   RegisterClassW(&window_class);
 }
 

@@ -41,7 +41,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pCmdLine,
       WS_OVERLAPPEDWINDOW | WS_VISIBLE | WS_CLIPCHILDREN, wip.x, wip.y,
       wip.width, wip.height, NULL, NULL, hInstance, appState);
 
-
   if (!appState->UI_handles.hwnd_main) {
     return -1; // ERR
   }

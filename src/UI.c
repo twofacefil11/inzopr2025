@@ -39,7 +39,6 @@ int init_UI(HWND hwnd, UI *ui) {
   RECT rc;
   GetClientRect(hwnd, &rc);
 
-  fprintf(stderr, "dupa2");
   // ui->hIcon =
   // LoadIcon(instanceappState->hInstance, MAKEINTRESOURCE(IDI_APP_ICON));
   // SendMessage(appState->UI_handles.hwnd_main, WM_SETICON, ICON_SMALL,
@@ -84,13 +83,13 @@ int init_UI(HWND hwnd, UI *ui) {
   AppendMenu(hFile, MF_SEPARATOR, 0, NULL);
   AppendMenu(hFile, MF_STRING, 3, L"Exit");
 
-  AppendMenu(hEdit, MF_STRING | MF_GRAYED, 4, L"Undo");
-  AppendMenu(hEdit, MF_STRING | MF_GRAYED, 5, L"Redo");
+  // AppendMenu(hEdit, MF_STRING | MF_GRAYED, 4, L"Undo");
+  // AppendMenu(hEdit, MF_STRING | MF_GRAYED, 5, L"Redo");
 
   AppendMenu(hInfo, MF_STRING, 6, L"About");
 
   AppendMenu(hMenubar, MF_POPUP, (UINT_PTR)hFile, L"File");
-  AppendMenu(hMenubar, MF_POPUP, (UINT_PTR)hEdit, L"Edit");
+  // AppendMenu(hMenubar, MF_POPUP, (UINT_PTR)hEdit, L"Edit");
   AppendMenu(hMenubar, MF_POPUP, (UINT_PTR)hInfo, L"Info");
 
   SetMenu(hwnd, hMenubar);
