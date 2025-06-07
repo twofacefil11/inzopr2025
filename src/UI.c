@@ -292,9 +292,10 @@ int init_UI(HWND hwnd, UI *ui) {
   SendMessage(ui->hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Negative");
   SendMessage(ui->hComboBox, CB_ADDSTRING, 0, (LPARAM)L"Monochrome");
   SendMessage(ui->hComboBox, SW_HIDE, 0, (LPARAM)L"io");
+
   SendMessage(ui->hComboBox, CB_SETCURSEL, 0, 0); // Select first item
   //
-  SendMessage(ui->hComboBox, CB_SETCURSEL, (WPARAM)-1,
+  SendMessage(ui->hComboBox, CB_SETCURSEL,(WPARAM)-1,
               0); // TODO: is that needed?
   SendMessage(ui->hDnd, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
 

@@ -1,8 +1,6 @@
 TOP:
-- [ ]: twilight filter
-- [ ]: matrix filter 
-- [ ]:
-- [ ]:
+- [ ]: OGARNĄĆ JAK SIE ROBI INSTALKE
+- [ ]: SHIP I DONT CARE ANYMORE
 - [ ]:
 
 BUGS:
@@ -20,7 +18,9 @@ BUGS:
 - [ ]: MAGIC VALUES, mainly ids
 - [x]: p sure it doesnt clamp the bw filter correctly 
 - [x]: conditional redrawing of the background bcs it flickers on hscroll
-- [ ]: ikokna w lewym górnym powinna być jako asset
+- [x]: ikokna w lewym górnym powinna być jako asset ( nie da sie frick it i dont care )
+- [ ]: 
+- [ ]: 
 - [ ]: 
 
 FILTERS:
@@ -31,7 +31,6 @@ FILTERS:
 - [x]: BLUR
 - [x]: BLUR HAS ONLY 3x3 KERNEL (TAK JU ZOSTANIE)
 - [x]: sharpen
-- [ ]:
 - [x]: amplify range is not tuned at all
 - [ ]: 
 - [ ]:
@@ -49,12 +48,12 @@ TODO:
 - [x]: TIE IN CONTROLS TO FILTERS
 - [x]: hide and show ui when needed.
 - [x]: info: about
-- [ ]: undo (event que)
+- [C]: undo (event que)
 - [x]: fit to frame, zoom things like that.
 - [ ]: Error handling cmon
 - [ ]: Debug mode
 - [ ]: Logging mode xddd
-- [ ]: IKONA
+- [X]: IKONA
 - [ ]:
 - [ ]:
 
