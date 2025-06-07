@@ -61,6 +61,7 @@ typedef struct {
   HWND hComboBox;
   HMENU hMenubar;
   HMENU hExportMenu;
+  HWND hAbout;
   HFONT hFont;
   HBRUSH hComboBgBrush;
   HICON hIcon;

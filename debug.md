@@ -1,4 +1,8 @@
 TOP:
+- [ ]: twilight filter
+- [ ]: matrix filter 
+- [ ]:
+- [ ]:
 - [ ]:
 
 BUGS:
@@ -15,7 +19,8 @@ BUGS:
 - [ ]: albo save before load czy coś
 - [ ]: MAGIC VALUES, mainly ids
 - [x]: p sure it doesnt clamp the bw filter correctly 
-- [ ]: conditional redrawing of the background bcs it flickers on hscroll
+- [x]: conditional redrawing of the background bcs it flickers on hscroll
+- [ ]: ikokna w lewym górnym powinna być jako asset
 - [ ]: 
 
 FILTERS:
@@ -49,7 +54,7 @@ TODO:
 - [ ]: Error handling cmon
 - [ ]: Debug mode
 - [ ]: Logging mode xddd
-- [ ]:
+- [ ]: IKONA
 - [ ]:
 - [ ]:
 

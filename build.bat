@@ -119,7 +119,6 @@ for %%f in (src\*.c) do (
     )
 )
 
-:: ==== ADD THIS BLOCK TO COMPILE YOUR RESOURCE FILE (main.rc) ====
 
 :: Compile resource script (main.rc) into a .res file to embed manifest
 rc /fo %BUILD_DIR%\main.res src\main.rc 
@@ -128,7 +127,6 @@ if errorlevel 1 (
     exit /b 1
 )
 
-:: ==== END ADD RESOURCE COMPILATION ====
 
 :: Link all the .obj files
 set OBJ_FILES=
@@ -136,7 +134,6 @@ for %%f in (%BUILD_DIR%\*.obj) do (
     set OBJ_FILES=!OBJ_FILES! %%f
 )
 
-:: ==== MODIFY LINKING COMMAND TO INCLUDE THE RESOURCE FILE AND comctl32.lib ====
 
 cl /Fe:%BUILD_DIR%\out.exe %OBJ_FILES% %BUILD_DIR%\main.res user32.lib gdi32.lib comctl32.lib comdlg32.lib shell32.lib
 if errorlevel 1 (
@@ -144,7 +141,6 @@ if errorlevel 1 (
     exit /b 1
 )
 
-:: ==== END MODIFIED LINK ====
 
 REM :: Compile
 REM cl /Iinclude /Fo:%BUILD_DIR%\main.obj /Fe:%BUILD_DIR%\out.exe src\main.c user32.lib gdi32.lib

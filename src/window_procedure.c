@@ -32,7 +32,6 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
 
       init_UI(hwnd, &app->UI_handles);
 
-
       SetWindowSubclass(app->UI_handles.filter_controls.hMonochrome, PanelProc,
                         1, (DWORD_PTR)app);
       SetWindowSubclass(app->UI_handles.filter_controls.hAmplify, PanelProc, 1,
@@ -179,7 +178,8 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
         case 5: { // Redo
         } break;
         // ==========================================
-        case 6: { // About
+        case 6: {
+          MessageBox(hwnd, "FilterLAB v0.2.whatever\n 2025 iipeq", "About", MB_OK);
         } break;
           // -------------------EFFECTS-DROPDOWN--------------------
           // case 100: {
