@@ -55,5 +55,4 @@ void apply_sepia(Image *original_image, Image *current_image);
 
 void reapply_effects(Image *original_image, Image *current_image, Filter_type type);
 static inline uint8_t clamp_int(int value);
-
 #endif // FILTERS_H

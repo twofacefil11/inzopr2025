@@ -9,6 +9,7 @@ State *init_state(HINSTANCE hInstance) { /// TODO
   if (!app_state)
     return NULL;
 
+  app_state->hic = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APP_ICON));
   app_state->current_filter_type = NO_FILTER;
   app_state->hInstance = hInstance;
 
@@ -35,13 +36,13 @@ State *init_state(HINSTANCE hInstance) { /// TODO
 void register_class(State *state, HINSTANCE hInstance,
                     const unsigned short *window_class_name) {
 
+
   static WNDCLASSW window_class = {0};
   window_class.lpfnWndProc = WindowProcessMessage;
   window_class.hCursor = LoadCursor(NULL, IDC_ARROW);
   window_class.hInstance = hInstance;
   window_class.lpszClassName = window_class_name;
-  window_class.hIcon = state->UI_handles.hIcon;
-  
+  window_class.hIcon = NULL; 
   RegisterClassW(&window_class);
 }
 

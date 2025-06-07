@@ -9,6 +9,7 @@
 #include <windows.h>
 
 #include "Filters.h"
+#include "resource.h"
 #include "Image.h"
 #include "UI.h"
 
@@ -37,7 +38,7 @@ typedef struct {
   // to zostanie zamienione na pointer do koleiki
   Filter_type current_filter_type;
   Filter_params filter_params;
-
+  HICON hic;
   float zoom;
 
 } State;

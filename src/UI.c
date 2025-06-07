@@ -39,6 +39,12 @@ int init_UI(HWND hwnd, UI *ui) {
   RECT rc;
   GetClientRect(hwnd, &rc);
 
+  fprintf(stderr, "dupa2");
+  // ui->hIcon =
+  // LoadIcon(instanceappState->hInstance, MAKEINTRESOURCE(IDI_APP_ICON));
+  // SendMessage(appState->UI_handles.hwnd_main, WM_SETICON, ICON_SMALL,
+  //             (LPARAM)appState->UI_handles.hIcon);
+
   /// niezbędne
   HINSTANCE hInstance = GetModuleHandle(NULL);
   /// dzięki temu ui wygląda nowocześniej
@@ -47,6 +53,7 @@ int init_UI(HWND hwnd, UI *ui) {
 
   // Drag and drop
   DragAcceptFiles(hwnd, TRUE);
+
 
   ui->display_buffer =
       make_display_buffer(hwnd); // możliwe że zniknie wiele z tego TODO
@@ -295,7 +302,6 @@ int init_UI(HWND hwnd, UI *ui) {
   SendMessage(ui->hComboBox, WM_SETFONT, (WPARAM)ui->hFont,
               MAKELPARAM(TRUE, 0));
 
-  SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)ui->hIcon);
 
   // --------------------------ABOUT----------------------
 

@@ -28,6 +28,13 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
           WS_CHILD | WS_BORDER, // debug visible
           10, 10, 200, 400, hwnd, (HMENU)200, NULL, (LPVOID)app);
 
+      // SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)NULL);
+      // SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)NULL);
+
+      // app->UI_handles.hIcon = LoadIcon(app->hInstance, MAKEINTRESOURCE(IDI_APP_ICON));
+      // fprintf(stderr, "%d", &app->UI_handles.hIcon);
+      // SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)app->UI_handles.hIcon);
+
       SetWindowSubclass(app->UI_handles.hSidebar, PanelProc, 0, (DWORD_PTR)app);
 
       init_UI(hwnd, &app->UI_handles);

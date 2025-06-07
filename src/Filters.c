@@ -128,34 +128,34 @@ void apply_amplify(Image *original_image, Image *current_image,
       r = original_image->pixels[i + 2];
 
       if (filter_params->clamp_amplify) {
-      float original_lum = 0.2126f * r + 0.7152f * g + 0.0722f * b;
+        float original_lum = 0.2126f * r + 0.7152f * g + 0.0722f * b;
 
-      float new_r = r * filter_params->amplify_r * 0.2f;
-      float new_g = g * filter_params->amplify_g * 0.2f;
-      float new_b = b * filter_params->amplify_b * 0.2f;
+        float new_r = r * filter_params->amplify_r * 0.2f;
+        float new_g = g * filter_params->amplify_g * 0.2f;
+        float new_b = b * filter_params->amplify_b * 0.2f;
 
-      float new_lum = 0.2126f * new_r + 0.7152f * new_g + 0.0722f * new_b;
-      float lum_ratio = (new_lum > 0.0f) ? (original_lum / new_lum) : 1.0f;
+        float new_lum = 0.2126f * new_r + 0.7152f * new_g + 0.0722f * new_b;
+        float lum_ratio = (new_lum > 0.0f) ? (original_lum / new_lum) : 1.0f;
 
-      new_r *= lum_ratio;
-      new_g *= lum_ratio;
-      new_b *= lum_ratio;
+        new_r *= lum_ratio;
+        new_g *= lum_ratio;
+        new_b *= lum_ratio;
 
-      current_image->pixels[i + 0] = clamp_int((int)new_b);
-      current_image->pixels[i + 1] = clamp_int((int)new_g);
-      current_image->pixels[i + 2] = clamp_int((int)new_r);
-      current_image->pixels[i + 3] = 255;
+        current_image->pixels[i + 0] = clamp_int((int)new_b);
+        current_image->pixels[i + 1] = clamp_int((int)new_g);
+        current_image->pixels[i + 2] = clamp_int((int)new_r);
+        current_image->pixels[i + 3] = 255;
         continue;
       }
 
-        int ib = b * filter_params->amplify_b;
-        int ig = g * filter_params->amplify_g;
-        int ir = r * filter_params->amplify_r;
+      int ib = b * filter_params->amplify_b;
+      int ig = g * filter_params->amplify_g;
+      int ir = r * filter_params->amplify_r;
 
-        current_image->pixels[i + 0] = (uint8_t)ib;
-        current_image->pixels[i + 1] = (uint8_t)ig;
-        current_image->pixels[i + 2] = (uint8_t)ir;
-        current_image->pixels[i + 3] = 255;
+      current_image->pixels[i + 0] = (uint8_t)ib;
+      current_image->pixels[i + 1] = (uint8_t)ig;
+      current_image->pixels[i + 2] = (uint8_t)ir;
+      current_image->pixels[i + 3] = 255;
     }
   }
 }
@@ -256,7 +256,7 @@ void apply_sepia(Image *original_image, Image *current_image) {
     weight_red = (r * 0.393) + (g * 0.769) + (b * 0.189);
     weight_green = (r * 0.349) + (g * 0.686) + (b * 0.168);
     weight_blue = (r * 0.272) + (g * 0.534) + (b * 0.131);
-
+    
     weight_red = (weight_red < 0) ? 0 : weight_red;
     weight_green = (weight_green < 0) ? 0 : weight_green;
     weight_blue = (weight_blue < 0) ? 0 : weight_blue;
