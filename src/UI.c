@@ -50,7 +50,14 @@ int init_UI(HWND hwnd, UI *ui) {
 
   ui->display_buffer =
       make_display_buffer(hwnd); // możliwe że zniknie wiele z tego TODO
+
   ui->hComboBgBrush = CreateSolidBrush(RGB(30, 30, 30));
+
+  ui->hDnd = CreateWindowExW(0, L"STATIC", L"Drag and drop an image to edit it.",
+                                       WS_CHILD | WS_VISIBLE | DT_CENTER, (rc.right / 2) - 100, (rc.bottom / 2) - 10, 200, 20,
+                                       hwnd, NULL, hInstance, NULL);
+
+
   /// MENU
   HMENU hMenubar = CreateMenu();
   HMENU hFile = CreateMenu();
@@ -283,11 +290,37 @@ int init_UI(HWND hwnd, UI *ui) {
   //
   SendMessage(ui->hComboBox, CB_SETCURSEL, (WPARAM)-1,
               0); // TODO: is that needed?
+  SendMessage(ui->hDnd, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
 
   SendMessage(ui->hComboBox, WM_SETFONT, (WPARAM)ui->hFont,
               MAKELPARAM(TRUE, 0));
 
   SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)ui->hIcon);
+
+  // --------------------------ABOUT----------------------
+
+  ui->hAbout = CreateWindowExW(WS_EX_TOOLWINDOW,
+                               L"#32770", // built-in dialog class!
+                               L"About", WS_POPUP | WS_CAPTION,
+                               ((rc.right - rc.left) / 2) + rc.left - 120,
+                               ((rc.top - rc.bottom) / 2) + rc.bottom - 70, 240,
+                               140, ui->hwnd_main, NULL, hInstance, NULL);
+
+  HWND hAboutText =
+      CreateWindowW(L"STATIC", L"FilterLAB v0.2.whatever\n(c) 2025 iipeq",
+                    WS_CHILD | WS_VISIBLE, 20, 20, 180, 40, ui->hAbout, NULL,
+                    hInstance, NULL);
+
+  HWND hAboutOK =
+      CreateWindowW(L"BUTTON", L"OK", WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON,
+                    95, 70, 50, 22, ui->hAbout, (HMENU)5555, hInstance, NULL);
+
+  ShowWindow(ui->hAbout, SW_HIDE); // hide at init
+
+  SendMessage(hAboutText, WM_SETFONT, (WPARAM)ui->hFont, MAKELPARAM(TRUE, 0));
+  SendMessage(hAboutOK, WM_SETFONT, (WPARAM)ui->hFont, MAKELPARAM(TRUE, 0));
+
+  // --------------------------ABOUT----------------------
 
   switch_controls(&ui->filter_controls, NULL);
 
@@ -328,12 +361,15 @@ int show_save_dialog(HWND hwnd, char *out_path) {
 // ----------------------------------------------------------------
 
 void enable_export(UI *ui) {
+  
   EnableMenuItem(ui->hMenubar, (UINT_PTR)ui->hExportMenu, MF_ENABLED);
   EnableMenuItem(ui->hExportMenu, 21, MF_ENABLED);
   EnableMenuItem(ui->hExportMenu, 22, MF_ENABLED);
   EnableMenuItem(ui->hExportMenu, 23, MF_ENABLED);
   EnableMenuItem(ui->hExportMenu, 24, MF_ENABLED);
   EnableMenuItem(ui->hExportMenu, 25, MF_ENABLED);
+
+  ShowWindow(ui->hDnd, SW_HIDE);
 }
 
 // ----------------------------------------------------------------

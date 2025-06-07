@@ -65,6 +65,7 @@ typedef struct {
   HFONT hFont;
   HBRUSH hComboBgBrush;
   HICON hIcon;
+  HWND hDnd;
   Filter_contorl_group_handles filter_controls;
 
 } UI;

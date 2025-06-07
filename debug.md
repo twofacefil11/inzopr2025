@@ -29,10 +29,10 @@ FILTERS:
 - [x]: amplify
 - [x]: Negative 
 - [x]: BLUR
-- [ ]: BLUR HAS ONLY 3x3 KERNEL
+- [x]: BLUR HAS ONLY 3x3 KERNEL (TAK JU ZOSTANIE)
 - [x]: sharpen
 - [ ]:
-- [ ]: amplify range is not tuned at all
+- [x]: amplify range is not tuned at all
 - [ ]: 
 - [ ]:
 
@@ -48,7 +48,7 @@ ERROR HANDLING:
 TODO:
 - [x]: TIE IN CONTROLS TO FILTERS
 - [x]: hide and show ui when needed.
-- [ ]: info: about
+- [x]: info: about
 - [ ]: undo (event que)
 - [x]: fit to frame, zoom things like that.
 - [ ]: Error handling cmon
@@ -59,13 +59,12 @@ TODO:
 - [ ]:
 
 UX:
-- [ ]: image or nice background when empty
 - [ ]: image picker not fullscreen, normal window (that might be just me)
 - [ ]: export before closing?
 - [ ]: export before loading?
 - [x]: in file picker complete filters for formats. (bad idea, no)
 - [ ]: label nad dropdownem do wboru efektów
-- [ ]: hint the user to drag and drop somwehow
+- [x]: hint the user to drag and drop somwehow
 - [ ]: adjust sidepanel dims to the contents
 - [ ]: 
 - [ ]: 

@@ -225,8 +225,6 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
       PAINTSTRUCT ps;
       HDC hdc = BeginPaint(hwnd, &ps);
 
-      // fprintf(stderr, "paint");
-
       Image *img = &app->current_image; // For preview
       if (app->flags.PREVIEW_ORIGINAL)
         img = &app->original_image;
