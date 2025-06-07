@@ -7,6 +7,8 @@ build/*
 build/output/*
 !build/output/**/
 
+build_release/*
+
 # System files
 .DS_Store
 Thumbs.db
