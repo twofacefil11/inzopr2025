@@ -186,7 +186,8 @@ LRESULT CALLBACK WindowProcessMessage(HWND hwnd, UINT message, WPARAM wParam,
         } break;
         // ==========================================
         case 6: {
-          MessageBox(hwnd, "FilterLAB v0.2.whatever\n 2025 iipeq", "About", MB_OK);
+          MessageBox(hwnd, "FilterLAB v0.2.whatever\n 2025 iipeq", "About",
+                     MB_OK);
         } break;
           // -------------------EFFECTS-DROPDOWN--------------------
           // case 100: {
@@ -414,6 +415,58 @@ LRESULT CALLBACK PanelProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam,
       // -------------------EFFECTS-DROPDOWN--------------------
 
       switch (LOWORD(wParam)) {
+
+        // ta funkcja jest zrobiona na chybcikiem c: może dziaa...
+        case 6677: {
+          fprintf(stderr, "in clip\n");
+
+          Image *img = &app->current_image;
+
+          if (!img->pixels || img->width <= 0 || img->height <= 0)
+            break;
+
+          int width = img->width;
+          int height = img->height;
+          int bytes_per_pixel = 4; // 32-bit BGRA
+          int image_size = width * height * bytes_per_pixel;
+          int header_size = sizeof(BITMAPINFOHEADER);
+          int total_size = header_size + image_size;
+
+          HGLOBAL hMem = GlobalAlloc(GMEM_MOVEABLE, total_size);
+          if (!hMem)
+            break;
+
+          void *pMem = GlobalLock(hMem);
+          if (!pMem) {
+            GlobalFree(hMem);
+            break;
+          }
+
+          BITMAPINFOHEADER *hdr = (BITMAPINFOHEADER *)pMem;
+          hdr->biSize = sizeof(BITMAPINFOHEADER);
+          hdr->biWidth = width;
+          hdr->biHeight = -height; // bo czyta odwrotnie...
+          hdr->biPlanes = 1;
+          hdr->biBitCount = 32;
+          hdr->biCompression = BI_RGB;
+
+          BYTE *dst = (BYTE *)pMem + header_size;
+          memcpy(dst, img->pixels, image_size);
+
+          GlobalUnlock(hMem);
+
+          if (!OpenClipboard(NULL)) {
+            GlobalFree(hMem);
+            break;
+          }
+
+          EmptyClipboard();
+          SetClipboardData(CF_DIB, hMem); //teraz nie ch sie system martwi o free
+          CloseClipboard();
+
+          break;
+        }
+
         case 6667:
           app->filter_params.clamp_amplify = IsDlgButtonChecked(hwnd, 6667);
 

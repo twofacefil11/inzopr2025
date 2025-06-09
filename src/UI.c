@@ -53,16 +53,15 @@ int init_UI(HWND hwnd, UI *ui) {
   // Drag and drop
   DragAcceptFiles(hwnd, TRUE);
 
-
   ui->display_buffer =
       make_display_buffer(hwnd); // możliwe że zniknie wiele z tego TODO
 
   ui->hComboBgBrush = CreateSolidBrush(RGB(30, 30, 30));
 
-  ui->hDnd = CreateWindowExW(0, L"STATIC", L"Drag and drop an image to edit it.",
-                                       WS_CHILD | WS_VISIBLE | DT_CENTER, (rc.right / 2) - 100, (rc.bottom / 2) - 10, 200, 20,
-                                       hwnd, NULL, hInstance, NULL);
-
+  ui->hDnd = CreateWindowExW(
+      0, L"STATIC", L"Drag and drop an image to edit it.",
+      WS_CHILD | WS_VISIBLE | DT_CENTER, (rc.right / 2) - 100,
+      (rc.bottom / 2) - 10, 200, 20, hwnd, NULL, hInstance, NULL);
 
   /// MENU
   HMENU hMenubar = CreateMenu();
@@ -248,8 +247,15 @@ int init_UI(HWND hwnd, UI *ui) {
 
     HWND hCheckbox_og = CreateWindowEx(
         0, L"BUTTON", L"Original",
-        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX, 10, 370, 150, 20,
+        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_AUTOCHECKBOX, 10, 345, 150, 20,
         ui->hSidebar, (HMENU)6668, hInstance, NULL);
+
+    // Copy button
+    HWND hButton_cp = CreateWindowEx(
+        0, L"BUTTON", L"Copy to clipboard",
+        WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, // ← Changed style
+        10, 370, 180, 20, ui->hSidebar, (HMENU)6677, hInstance, NULL);
+
     // CheckDlgButton(ui->filter_controls.hAmplify, 6667, BST_CHECKED);
     // ustaw czcionki labelom
     SendMessage(hLabel1, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
@@ -257,6 +263,7 @@ int init_UI(HWND hwnd, UI *ui) {
     SendMessage(hLabel3, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
     SendMessage(hCheckbox, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
     SendMessage(hCheckbox_og, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
+    SendMessage(hButton_cp, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
   }
 
   // Set slider range and position
@@ -295,13 +302,12 @@ int init_UI(HWND hwnd, UI *ui) {
 
   SendMessage(ui->hComboBox, CB_SETCURSEL, 0, 0); // Select first item
   //
-  SendMessage(ui->hComboBox, CB_SETCURSEL,(WPARAM)-1,
+  SendMessage(ui->hComboBox, CB_SETCURSEL, (WPARAM)-1,
               0); // TODO: is that needed?
   SendMessage(ui->hDnd, WM_SETFONT, (WPARAM)ui->hFont, TRUE);
 
   SendMessage(ui->hComboBox, WM_SETFONT, (WPARAM)ui->hFont,
               MAKELPARAM(TRUE, 0));
-
 
   // --------------------------ABOUT----------------------
 
@@ -367,7 +373,7 @@ int show_save_dialog(HWND hwnd, char *out_path) {
 // ----------------------------------------------------------------
 
 void enable_export(UI *ui) {
-  
+
   EnableMenuItem(ui->hMenubar, (UINT_PTR)ui->hExportMenu, MF_ENABLED);
   EnableMenuItem(ui->hExportMenu, 21, MF_ENABLED);
   EnableMenuItem(ui->hExportMenu, 22, MF_ENABLED);
