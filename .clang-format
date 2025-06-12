@@ -5,6 +5,7 @@ IndentWidth: 4
 IndentCaseLabels: true
 ReflowComments: false
 BreakBeforeBraces: Custom
+BreakAfterReturnType: Automatic
 BraceWrapping:
   AfterStruct: false 
   AfterClass: false
