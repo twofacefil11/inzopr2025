@@ -1,2 +1,15 @@
+---
+Language: C
+BasedOnStyle: Mozilla
+IndentWidth: 4
 IndentCaseLabels: true
 ReflowComments: false
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterStruct: false 
+  AfterClass: false
+  AfterEnum: false
+  AfterCaseLabel: true
+  AfterFunction: false 
+
+---
